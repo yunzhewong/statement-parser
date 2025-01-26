@@ -8,40 +8,15 @@ import os
 from datetime import datetime
 import logging
 
+from transaction import Transaction, TransactionType
+from utilities import export_to_csv, get_filenames, get_password, should_force
+
 logger = logging.getLogger("pypdf")
 logger.setLevel(logging.ERROR)
 
 INPUT_PATH = "data/HSBC/raw"
 OUTPUT_PATH = "data/HSBC"
-
-current_directory = os.path.dirname(os.path.abspath(__file__))
-
-with open(os.path.join(current_directory, "passwords.json")) as password_file:
-    passwords = json.load(password_file)
-    PASSWORD = passwords["hsbc"]
-
-
-class TransactionType(Enum):
-    CardPayment = "Card Payment"
-    Credit = "Credit"
-    TransferIn = "Transfer In"
-    TransferOut = "Transfer Out"
-
-
-class Transaction:
-    def __init__(
-        self, date: datetime, amount: float, type: TransactionType, description: str
-    ):
-        self.date = date
-        self.amount = amount
-        self.type = type
-        self.description = description
-
-    def __repr__(self):
-        return f"Date: {self.date}, Desc: {self.description}, Amt: {self.amount}, Type: {self.type.value}"
-
-    def to_data(self):
-        return [self.date, self.description, self.amount, self.type.value]
+PASSWORD = get_password("hsbc")
 
 
 def get_page_text(reader: PdfReader):
@@ -315,38 +290,20 @@ def get_pdf_data(reader: PdfReader):
 
 
 if __name__ == "__main__":
-    force = False
-    if len(sys.argv) == 2 and sys.argv[1] == "f":
-        force = True
-
-    all_items = os.listdir(INPUT_PATH)
-    filenames = [f for f in all_items if os.path.isfile(os.path.join(INPUT_PATH, f))]
+    force = should_force(sys.argv)
+    filenames = get_filenames(INPUT_PATH)
 
     for filename in filenames:
-        full_name = os.path.join(INPUT_PATH, filename)
-        reader = PdfReader(full_name)
-        month_range, parsed_transactions = get_pdf_data(reader)
+        file_path = os.path.join(INPUT_PATH, filename)
+        reader = PdfReader(file_path)
+        month_range, transactions = get_pdf_data(reader)
         reader.close()
 
         output_name = " - ".join(month_range)
         pdf_name = output_name + ".pdf"
-        csv_name = output_name + ".csv"
-        if not force and output_name + ".pdf" == filename:
+        if not force and pdf_name == filename:
             print(f"{output_name} skipped")
             continue
 
-        os.rename(full_name, os.path.join(INPUT_PATH, pdf_name))
-
-        csv_path = os.path.join(OUTPUT_PATH, csv_name)
-        if os.path.isfile(csv_path):
-            os.remove(csv_path)
-
-        data = [["Date", "Description", "Amount", "Type"]]
-        for transaction in parsed_transactions:
-            data.append(transaction.to_data())
-
-        with open(csv_path, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerows(data)
-
-        print(f"{output_name} written, {len(parsed_transactions)} transactions")
+        os.rename(file_path, os.path.join(INPUT_PATH, pdf_name))
+        export_to_csv(OUTPUT_PATH, output_name + ".csv", transactions)
