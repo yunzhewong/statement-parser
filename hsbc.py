@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 import logging
 
+from printing import valid_print
 from transaction import Transaction, TransactionType
 from utilities import export_to_csv, get_filenames, get_password, should_force
 
@@ -17,6 +18,67 @@ logger.setLevel(logging.ERROR)
 INPUT_PATH = "data/HSBC/raw"
 OUTPUT_PATH = "data/HSBC"
 PASSWORD = get_password("hsbc")
+
+
+def float_close(f1, f2):
+    return abs(f1 - f2) < 1e-6
+
+
+class ValidationData:
+    def __init__(self, starting_balance, ending_parameters):
+        self.starting_balance = starting_balance
+        (closing_balance, total_debits, total_credits, debit_count, credit_count) = (
+            ending_parameters
+        )
+        self.closing_balance = closing_balance
+        self.total_debits = total_debits
+        self.total_credits = total_credits
+        self.debit_count = debit_count
+        self.credit_count = credit_count
+
+        balance_difference = self.closing_balance - self.starting_balance
+        transaction_difference = self.total_credits - self.total_debits
+        assert float_close(balance_difference, transaction_difference)
+
+    def check(self, transactions: List[Transaction]):
+        change_in_balance: float = 0
+        debit_sum: float = 0
+        credit_sum: float = 0
+        debit_count: int = 0
+        credit_count: int = 0
+
+        for transaction in transactions:
+            change = transaction.amount
+
+            if transaction.type in [
+                TransactionType.CardPayment,
+                TransactionType.TransferOut,
+            ]:
+                change *= -1
+                debit_sum += transaction.amount
+                debit_count += 1
+            else:
+                credit_sum += transaction.amount
+                credit_count += 1
+
+            change_in_balance += change
+
+        assert debit_count == self.debit_count
+        valid_print(f"Debit Count: {debit_count} / {self.debit_count}")
+        assert credit_count == self.credit_count
+        valid_print(f"Credit Count: {credit_count} / {self.credit_count}")
+
+        assert float_close(debit_sum, self.total_debits)
+        valid_print(f"Debit Sum: {debit_sum:.2f} / {self.total_debits:.2f}")
+
+        assert float_close(credit_sum, self.total_credits)
+        valid_print(f"Debit Sum: {credit_sum:.2f} / {self.total_credits:.2f}")
+
+        expected_change = self.closing_balance - self.starting_balance
+        assert float_close(change_in_balance, expected_change)
+        valid_print(
+            f"Change In Balance: {change_in_balance:.2f} / {expected_change:.2f}"
+        )
 
 
 def get_page_text(reader: PdfReader):
@@ -43,7 +105,7 @@ def get_transaction_text(transaction_page: str):
     date_string_index = transaction_page.find("Date")
     after_top_row_index = transaction_page.find("\n", date_string_index) + 1
 
-    stop_index = transaction_page.find("Transaction Number")
+    stop_index = transaction_page.find("END OF STATEMENT")
     if stop_index == -1:
         stop_index = transaction_page.find("Important Information")
 
@@ -51,16 +113,19 @@ def get_transaction_text(transaction_page: str):
     while transaction_page[stop_index] == "\n":
         stop_index -= 1
 
-    return transaction_page[after_top_row_index:stop_index]
+    return transaction_page[after_top_row_index : stop_index + 1]
 
 
-def get_payment_transactions(transaction_text: List[str]):
+def get_transaction_lines(transaction_text: List[str]):
     transactions = "\n".join(transaction_text)
     first_newline = transactions.find("\n")
+
+    starting_lines = transactions[:first_newline]
     if first_newline == -1:
         raise Exception("Newline expected")
 
     closing_balance_index = transactions.find("CLOSING BALANCE")
+    ending_lines = transactions[closing_balance_index:]
 
     while transactions[closing_balance_index] != "\n":
         closing_balance_index -= 1
@@ -68,7 +133,55 @@ def get_payment_transactions(transaction_text: List[str]):
     transaction_lines = transactions[first_newline:closing_balance_index].split("\n")
     while "" in transaction_lines:
         transaction_lines.remove("")
-    return transaction_lines
+    return starting_lines, transaction_lines, ending_lines
+
+
+def get_last_item_as_money(line: str):
+    return parse_money(line.split(" ")[-1])
+
+
+def get_starting_balance(line: str):
+    return get_last_item_as_money(line)
+
+
+def get_closing_balance(line: str):
+    return get_last_item_as_money(line)
+
+
+def split_to_separated_line(line: str):
+    separated = line.split(" ")
+    return list(filter(lambda x: x != "", separated))
+
+
+def get_transaction_totals(line: str):
+    separated = split_to_separated_line(line)
+
+    debits = parse_money(separated[2])
+    credits = parse_money(separated[3])
+
+    return debits, credits
+
+
+def get_transaction_counts(line: str):
+    separated = split_to_separated_line(line)
+
+    return int(separated[2]), int(separated[3])
+
+
+def get_ending_parameters(ending_lines: str):
+    lines = ending_lines.split("\n")
+
+    closing_balance = get_closing_balance(lines[0])
+    total_debits, total_credits = get_transaction_totals(lines[1])
+    debit_count, credit_count = get_transaction_counts(lines[2])
+
+    return closing_balance, total_debits, total_credits, debit_count, credit_count
+
+
+def get_validation_data(starting_lines: str, ending_lines: str):
+    starting_balance = get_starting_balance(starting_lines)
+    ending_parameters = get_ending_parameters(ending_lines)
+    return ValidationData(starting_balance, ending_parameters)
 
 
 MONTH_ABBREVIATIONS = {
@@ -175,7 +288,7 @@ def reformat_transaction(
         return (remaining_desc, val, TransactionType.Credit)
     if val < 0:
         return (desc, -1 * val, TransactionType.TransferOut)
-    return (desc, -1 * val, TransactionType.TransferIn)
+    return (desc, val, TransactionType.TransferIn)
 
 
 def parse_money(money: str):
@@ -273,8 +386,9 @@ def get_pdf_data(reader: PdfReader):
     month_range = get_month_range(pages_text)
     transaction_pages_text = get_transaction_pages_text(pages_text)
     transaction_text = [get_transaction_text(page) for page in transaction_pages_text]
-    payment_transactions = get_payment_transactions(transaction_text)
-    date_groups = group_by_dates(payment_transactions, month_range)
+    start, transaction_lines, end = get_transaction_lines(transaction_text)
+    validation_data = get_validation_data(start, end)
+    date_groups = group_by_dates(transaction_lines, month_range)
 
     parsed_transactions: List[Transaction] = []
 
@@ -285,6 +399,8 @@ def get_pdf_data(reader: PdfReader):
         for item in formatted:
             (desc, val, type) = item
             parsed_transactions.append(Transaction(date, val, type, desc))
+
+    validation_data.check(parsed_transactions)
 
     return month_range, parsed_transactions
 
