@@ -10,9 +10,17 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
+def colored_print(text: str, color: str):
+    print(color + text + bcolors.ENDC)
+
+
 def valid_print(text: str):
-    print(bcolors.OKGREEN + text + bcolors.ENDC)
+    colored_print(text, bcolors.OKGREEN)
+
+
+def warning_print(text: str):
+    colored_print(text, bcolors.WARNING)
 
 
 def error_print(text: str):
-    print(bcolors.FAIL + text + bcolors.ENDC)
+    colored_print(text, bcolors.FAIL)

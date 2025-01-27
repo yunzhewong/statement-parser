@@ -23,3 +23,7 @@ class Transaction:
 
     def to_data(self):
         return [self.date, self.description, self.amount, self.type.value]
+
+
+def parse_money(money: str):
+    return float("".join(money.split(",")))

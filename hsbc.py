@@ -1,16 +1,13 @@
-import csv
-from enum import Enum
-import json
-import sys
 from typing import Dict, List, Tuple
 from pypdf import PdfReader
-import os
 from datetime import datetime
 import logging
 
+from dates import format_date, get_month_value, get_year_value
+from files import manage_files
 from printing import valid_print
-from transaction import Transaction, TransactionType
-from utilities import export_to_csv, get_filenames, get_password, should_force
+from transaction import Transaction, TransactionType, parse_money
+from files import get_password
 
 logger = logging.getLogger("pypdf")
 logger.setLevel(logging.ERROR)
@@ -184,30 +181,7 @@ def get_validation_data(starting_lines: str, ending_lines: str):
     return ValidationData(starting_balance, ending_parameters)
 
 
-MONTH_ABBREVIATIONS = {
-    "Jan": 1,
-    "Feb": 2,
-    "Mar": 3,
-    "Apr": 4,
-    "May": 5,
-    "Jun": 6,
-    "Jul": 7,
-    "Aug": 8,
-    "Sep": 9,
-    "Oct": 10,
-    "Nov": 11,
-    "Dec": 12,
-}
-
 DATE_STRING_LENGTH = 6
-
-
-def get_year_value(month_string: str, month_range: List[str]):
-    for string in month_range:
-        if string.startswith(month_string):
-            return int("20" + string[3:5])
-
-    raise Exception("Expected to find year")
 
 
 def line_starts_with_date(line: str, month_range: List[str]):
@@ -219,7 +193,8 @@ def line_starts_with_date(line: str, month_range: List[str]):
         start_index += 1
 
     month_string = line[start_index + 3 : start_index + DATE_STRING_LENGTH]
-    month_value = MONTH_ABBREVIATIONS.get(month_string, None)
+
+    month_value = get_month_value(month_string)
 
     if month_value is None:
         return None
@@ -291,10 +266,6 @@ def reformat_transaction(
     return (desc, val, TransactionType.TransferIn)
 
 
-def parse_money(money: str):
-    return float("".join(money.split(",")))
-
-
 DESCRIPTION_CUTOFF = 60
 DEBIT_CUTOFF = 120
 CREDIT_CUTOFF = 160
@@ -350,11 +321,6 @@ def identify_transactions(payments: List[str]):
     return transactions
 
 
-# comes in as Mmm YYYY, out as MmmYY (e.g Nov 2024 to Nov24)
-def format_date(month: str, year: str):
-    return month + year[2:]
-
-
 def get_month_range(pages_text: List[str]):
     for page_text in pages_text:
         lines = page_text.split("\n")
@@ -406,20 +372,4 @@ def get_pdf_data(reader: PdfReader):
 
 
 if __name__ == "__main__":
-    force = should_force(sys.argv)
-    filenames = get_filenames(INPUT_PATH)
-
-    for filename in filenames:
-        file_path = os.path.join(INPUT_PATH, filename)
-        reader = PdfReader(file_path)
-        month_range, transactions = get_pdf_data(reader)
-        reader.close()
-
-        output_name = " - ".join(month_range)
-        pdf_name = output_name + ".pdf"
-        if not force and pdf_name == filename:
-            print(f"{output_name} skipped")
-            continue
-
-        os.rename(file_path, os.path.join(INPUT_PATH, pdf_name))
-        export_to_csv(OUTPUT_PATH, output_name + ".csv", transactions)
+    manage_files(INPUT_PATH, OUTPUT_PATH, get_pdf_data)
