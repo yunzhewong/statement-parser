@@ -4,6 +4,7 @@ from pypdf import PdfReader
 from dates import get_month_value, get_year_value
 from files import get_password, manage_files
 from printing import warning_print
+from search import find_index_prior_to_newline, search
 from transaction import Transaction, TransactionType, parse_money
 
 
@@ -62,19 +63,6 @@ def get_transaction_details(value: float, desc: str):
     if value < 0:
         return -1 * value, TransactionType.Credit
     return value, TransactionType.CardPayment
-
-
-def search(arr: List[str], start: int, inc: int, condition: Callable[[str], bool]):
-    count = 0
-    while condition(arr[start]):
-        start += inc
-        count += 1
-    return start, count
-
-
-def find_index_prior_to_newline(page: str, current_index: int):
-    end_index, _ = search(list(page), current_index, -1, lambda x: x != "\n")
-    return end_index
 
 
 def parse_transaction(line: str, month_range: List[str]):
