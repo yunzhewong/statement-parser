@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import Callable, List
 from pypdf import PdfReader
 from dates import get_month_value, get_year_value
 from files import get_password, manage_files
@@ -64,6 +64,19 @@ def get_transaction_details(value: float, desc: str):
     return value, TransactionType.CardPayment
 
 
+def search(arr: List[str], start: int, inc: int, condition: Callable[[str], bool]):
+    count = 0
+    while condition(arr[start]):
+        start += inc
+        count += 1
+    return start, count
+
+
+def find_index_prior_to_newline(page: str, current_index: int):
+    end_index, _ = search(list(page), current_index, -1, lambda x: x != "\n")
+    return end_index
+
+
 def parse_transaction(line: str, month_range: List[str]):
     separated = line.strip().split(" ")
 
@@ -81,30 +94,18 @@ def parse_transaction(line: str, month_range: List[str]):
     reverse_index = len(separated) - 1
     value = parse_money(separated[reverse_index])
 
-    forward_index = 2
-    while separated[forward_index] == "":
-        forward_index += 1
+    forward_index, _ = search(separated, 2, 1, lambda x: x == "")
 
-    # skip the amount
-    space_skips = False
-    reverse_index -= 1
-    while separated[reverse_index] == "":
-        space_skips = True
-        reverse_index -= 1
+    reverse_index, count = search(separated, reverse_index - 1, -1, lambda x: x == "")
 
-    if not space_skips:
+    if count == 0:
         warning_print(f"NO AMOUNT: {line}")
         return None
 
-    # skip the reference
-    space_skips = False
-    reverse_index -= 1
-    while separated[reverse_index] == "":
-        space_skips = True
-        reverse_index -= 1
+    reverse_index, count = search(separated, reverse_index - 1, -1, lambda x: x == "")
 
-    if not space_skips:
-        warning_print(f"NO AMOUNT: {line}")
+    if count == 0:
+        warning_print(f"NO DESC: {line}")
         return None
 
     description = " ".join(separated[forward_index : reverse_index + 1])
@@ -120,20 +121,11 @@ def extract_transactions(page: str, month_range: List[str]):
 
         if end_index == -1:
             end_index = page.find("Important Information")
-            end_index -= 1
-            while page[end_index] != "\n":
-                end_index -= 1
-            end_index -= 1
-            while page[end_index] != "\n":
-                end_index -= 1
+            end_index = find_index_prior_to_newline(page, end_index - 1)
+            end_index = find_index_prior_to_newline(page, end_index - 1)
 
-        end_index -= 1
-        while page[end_index] != "\n":
-            end_index -= 1
-
-    end_index -= 1
-    while page[end_index] != "\n":
-        end_index -= 1
+        end_index = find_index_prior_to_newline(page, end_index - 1)
+    end_index = find_index_prior_to_newline(page, end_index - 1)
 
     prior_line_index = page.find("Card Number")
     if prior_line_index == -1:
