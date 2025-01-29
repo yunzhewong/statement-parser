@@ -14,6 +14,9 @@ from transaction import Transaction, TransactionType, parse_money
 INPUT_PATH_EVERYDAY = "data/BOQ/Everyday/raw"
 OUTPUT_PATH_EVERYDAY = "data/BOQ/Everyday"
 
+INPUT_PATH_SAVINGS = "data/BOQ/Savings/raw"
+OUTPUT_PATH_SAVINGS = "data/BOQ/Savings"
+
 
 class ValidationData:
     def __init__(
@@ -156,7 +159,6 @@ def get_transaction_lines(pages: List[str]):
         formatted_lines = [formatted_line(l) for l in page_lines]
         lines += list(filter(lambda x: len(x) != 0, formatted_lines))
 
-    print(lines[0:2])
     return lines[2:]
 
 
@@ -259,3 +261,4 @@ def get_data(reader: PdfReader):
 
 if __name__ == "__main__":
     manage_files(INPUT_PATH_EVERYDAY, OUTPUT_PATH_EVERYDAY, get_data)
+    manage_files(INPUT_PATH_SAVINGS, OUTPUT_PATH_SAVINGS, get_data)
