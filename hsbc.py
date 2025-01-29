@@ -3,8 +3,9 @@ from pypdf import PdfReader
 from datetime import datetime
 import logging
 
-from dates import format_date, get_month_value, get_year_value
+from dates import format_date, get_month_value, get_date_string_year
 from files import manage_files
+from floats import float_close
 from printing import valid_print
 from transaction import Transaction, TransactionType, parse_money
 from files import get_password
@@ -15,10 +16,6 @@ logger.setLevel(logging.ERROR)
 INPUT_PATH = "data/HSBC/raw"
 OUTPUT_PATH = "data/HSBC"
 PASSWORD = get_password("hsbc")
-
-
-def float_close(f1, f2):
-    return abs(f1 - f2) < 1e-6
 
 
 class ValidationData:
@@ -199,7 +196,7 @@ def line_starts_with_date(line: str, month_range: List[str]):
     if month_value is None:
         return None
 
-    year_value = get_year_value(month_string, month_range)
+    year_value = get_date_string_year(month_string, month_range)
 
     day_value = int(line[start_index : start_index + 2])
     return (

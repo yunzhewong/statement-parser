@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Callable, List
 from pypdf import PdfReader
-from dates import get_month_value, get_year_value
+from dates import get_month_value, get_date_string_year
 from files import get_password, manage_files
 from printing import warning_print
 from search import find_index_prior_to_newline, search
@@ -75,7 +75,7 @@ def parse_transaction(line: str, month_range: List[str]):
         warning_print(f"NO DATE: {line}")
         return None
     day = int(separated[1])
-    year_value = get_year_value(month_string, month_range)
+    year_value = get_date_string_year(month_string, month_range)
 
     date = datetime(year_value, month, day)
 

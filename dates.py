@@ -41,7 +41,14 @@ def month_range_to_file_name(month_range: List[str]):
     return " to ".join(numbers)
 
 
-def get_year_value(month_string: str, month_range: List[str]):
+def get_date_string_month(month_string: str):
+    value = get_month_value(month_string[:3])
+    if value is None:
+        raise Exception("Value expected")
+    return value
+
+
+def get_date_string_year(month_string: str, month_range: List[str]):
     for string in month_range:
         if string.startswith(month_string):
             return int("20" + string[3:5])
