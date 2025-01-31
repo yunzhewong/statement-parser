@@ -3,7 +3,7 @@ from typing import List, Tuple
 from pypdf import PdfReader
 
 from dates import get_date_string_month, get_month_value, get_date_string_year
-from files import manage_files
+from files import get_layout_page_data, manage_files
 
 from floats import float_close
 from printing import valid_print
@@ -55,10 +55,6 @@ class ValidationData:
 
         assert float_close(credits, self.total_credits)
         valid_print(f"Total Credits: {credits:.2f} / {self.total_credits:.2f}")
-
-
-def get_pages(reader: PdfReader):
-    return [page.extract_text(extraction_mode="layout") for page in reader.pages]
 
 
 def get_validation_value(first_page: str, text: str):
@@ -246,8 +242,7 @@ def extract_transactions(lines: List[str], month_range: List[str]):
 
 
 def get_data(reader: PdfReader):
-    pages = get_pages(reader)
-
+    pages = get_layout_page_data(reader)
     validation_data = get_validation_data(pages[0])
     month_range = get_month_range(pages[0])
     transaction_pages = get_transaction_pages(pages)

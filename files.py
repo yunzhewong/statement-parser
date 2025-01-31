@@ -50,6 +50,10 @@ def get_password(key: str) -> str:
     raise Exception("Fill passwords.json")
 
 
+def get_layout_page_data(reader: PdfReader):
+    return [page.extract_text(extraction_mode="layout") for page in reader.pages]
+
+
 def manage_files(
     input_path: str,
     output_path: str,

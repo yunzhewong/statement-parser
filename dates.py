@@ -26,6 +26,13 @@ def get_month_value(month_abbreviation: str):
     return MONTH_ABBREVIATIONS.get(month_abbreviation, None)
 
 
+def get_month_abbreviation(value: int):
+    for key in MONTH_ABBREVIATIONS.keys():
+        if MONTH_ABBREVIATIONS[key] == value:
+            return key
+    raise Exception("Could not find key")
+
+
 def month_string_to_numbers(month_string: str):
     month_value = get_month_value(month_string[:3])
     if month_value is None:
