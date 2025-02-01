@@ -1,15 +1,25 @@
-Orange Everyday
+Savings Maximiser
 statement
 
 
-                                                                                                  022              Client number: 84747825
 
 
-              4294967197                                                                                           BSB number: 923 100
-              Mr Yun Zhe Wong                                                                                      Orange Everyday number: 312356136
-              111 Station Street
-              CARLTON VIC 3053                                                                                     Statement number: 6
-                                                                                                                   Statement from:  01/10/2024 to 31/12/2024
+
+
+
+
+
+                                                                                                               022
+                                                                                                                          Client number: 84747825
+                        4294967197
+                        Mr Yun Zhe Wong                                                                                   BSB number: 923 100
+                        111 Station Street                                                                                Savings Maximiser number: 815723151
+                        CARLTON VIC 3053                                                                                  Statement number: 2
+
+                                                                                                                          Statement from: 01/01/2024 to 30/06/2024
+
+
+
 
 
 
@@ -32,180 +42,154 @@ Balance
 
 Opening balance                           Total money in                             Total money out                            Closing balance
 
-$287.24                                          $3,503.05                                      $-3,482.28                                       $308.01
+$15,579.71                                     $7,900.00                                      $-350.00                                          $23,582.85
+
 
 
 Transactions
-
-Account name: Orange Everyday
-
+Account name: Savings Maximiser
 Date                 Details                                                                 Money out $               Money in $               Balance $
 
-02/10/2024                                                                                                                                       1,000.00                       1,287.24Osko Deposit - Receipt 877656
-                        Yun Zhe Wong
-02/10/2024                                                                                            -1,000.00                                                                287.24Internal Transfer - Receipt 454056
-                        To Savings Maximiser 815723151
-04/10/2024                                                                                            -1.00                                                                        286.24Visa Purchase - Receipt 136432
-                        DOT MYKI RELOAD MELBOURNE
-                        Date 02/10/24 Card 6522
-04/10/2024                                                                                            -1.00                                                                        285.24Visa Purchase - Receipt 136433
-                        DOT MYKI RELOAD MELBOURNE
-                        Date 02/10/24 Card 6522
-04/10/2024                                                                                            -1.00                                                                        284.24Visa Purchase - Receipt 136434
-                        DOT MYKI RELOAD MELBOURNE
-                        Date 02/10/24 Card 6522
-04/10/2024                                                                                            -1.00                                                                        283.24Visa Purchase - Receipt 136435
-                        DOT MYKI RELOAD MELBOURNE
-                        Date 02/10/24 Card 6522
-04/10/2024                                                                                            -1.00                                                                        282.24Visa Purchase - Receipt 136436
-                        DOT MYKI RELOAD MELBOURNE
-                        Date 02/10/24 Card 6522
-09/10/2024                                                                                            -4.41                                                                        277.83Direct Debit - Receipt 184265
-                        348045 Agl Sales Pty Lt 410012327017
-                        To 34238 032797
-09/10/2024                                                                                                                                       0.04                               277.87Cashback - Receipt 358477
-                        Oe Cashback
+04/01/2024                                                                                                                                       900.00                          16,479.71Internal Transfer - Receipt 554519
+                         From Orange Everyday 312356136
+31/01/2024                                                                                                                                       7.66                               16,487.37Interest Credit - Receipt 942657
+31/01/2024                                                                                                                                       68.92                             16,556.29Credit Bonus Interest - Receipt 942657
+01/02/2024                                                                                                                                       1,000.00                       17,556.29Internal Transfer - Receipt 005455
+                         From Orange Everyday 312356136
+29/02/2024                                                                                                                                       7.67                               17,563.96Interest Credit - Receipt 915446
+29/02/2024                                                                                                                                       69.05                             17,633.01Credit Bonus Interest - Receipt 915446
+01/03/2024                                                                                                                                       900.00                          18,533.01Internal Transfer - Receipt 198771
+                         From Orange Everyday 312356136
+14/03/2024                                                                                                                                       1,000.00                       19,533.01Internal Transfer - Receipt 438824
+                         From Orange Everyday 312356136
+31/03/2024                                                                                                                                       8.93                               19,541.94Interest Credit - Receipt 941729
+31/03/2024                                                                                                                                       80.36                            19,622.30Credit Bonus Interest - Receipt 941729
+05/04/2024                                                                                                                                       800.00                          20,422.30Internal Transfer - Receipt 595976
+                         From Orange Everyday 312356136
+15/04/2024                                                                                                                                       600.00                          21,022.30Internal Transfer - Receipt 749882
+                         From Orange Everyday 312356136
+19/04/2024                                                                                                                                       400.00                          21,422.30Internal Transfer - Receipt 503550
 
 
 
-
-Page 1 of 4 | Statement continued over
-####
+Page 1 of 3 | Statement continued over####
 Transactions (continued)
 
 Date                 Details                                                                 Money out $               Money in $               Balance $
+                         extra
+                         From Orange Everyday 312356136
+28/04/2024                                                                                                                                       600.00                          22,022.30Internal Transfer - Receipt 144129
+                         From Orange Everyday 312356136
+30/04/2024                                                                                                                                       9.43                               22,031.73Interest Credit - Receipt 920761
+30/04/2024                                                                                                                                       84.85                             22,116.58Credit Bonus Interest - Receipt 920761
+03/05/2024                                                                                                                                       700.00                          22,816.58Internal Transfer - Receipt 005626
+                         From Orange Everyday 312356136
+10/05/2024                                                                                            -150.00                                                                   22,666.58Internal Transfer - Receipt 477748
+                         To Orange Everyday 312356136
+15/05/2024                                                                                            -100.00                                                                   22,566.58Internal Transfer - Receipt 462071
+                         To Orange Everyday 312356136
+31/05/2024                                                                                                                                       10.56                             22,577.14Interest Credit - Receipt 945420
+31/05/2024                                                                                                                                       95.06                            22,672.20Credit Bonus Interest - Receipt 945420
+03/06/2024                                                                                                                                       900.00                          23,572.20Internal Transfer - Receipt 744238
+                         From Orange Everyday 312356136
+03/06/2024                                                                                                                                       100.00                          23,672.20Internal Transfer - Receipt 872972
+                         From Orange Everyday 312356136
+18/06/2024                                                                                            -100.00                                                                   23,572.20Internal Transfer - Receipt 136744
+                         To Orange Everyday 312356136
+30/06/2024                                                                                                                                       10.65                             23,582.85Interest Credit - Receipt 923527
 
-01/11/2024                                                                                                                                       1,000.00                       1,277.87Osko Deposit - Receipt 346259
-                          Yun Zhe Wong
-02/11/2024                                                                                            -1,000.00                                                                277.87Internal Transfer - Receipt 442691
-                          To Savings Maximiser 815723151
-07/11/2024                                                                                            -193.54                                                                    84.33Direct Debit - Receipt 175057
-                          348045 Agl Sales Pty Lt 450012348738
-                          To 34238 032797
-07/11/2024                                                                                                                                       1.94                               86.27Cashback - Receipt 772093
-                          Oe Cashback
-08/11/2024                                                                                            -88.40                                                                      -2.13Force Post No Funds - Receipt 170036
-                          348045 Agl Sales Pty Lt 680012827230
-                          To 34238 032797
-08/11/2024                                                                                                                                       88.40                             86.27Reversal Direct Debit
-                          Agl Sales Pty Lt 312356136000170036
-                          To 34238 032797
-08/11/2024                                                                                                                                       0.88                               87.15Cashback - Receipt 014863
-                          Oe Cashback
-08/11/2024                                                                                            -0.88                                                                        86.27Reversal-Cashback
-                          Cashback Reversal
-13/11/2024                                                                                                                                       200.00                          286.27Internal Transfer - Receipt 830400
-                          From Savings Maximiser 815723151
-15/11/2024                                                                                             -88.40                                                                      197.87Direct Debit - Receipt 140031
-                          348045 Agl Sales Pty Lt 520012367120
-                          To 34238 032797
-15/11/2024                                                                                                                                       0.88                               198.75Cashback - Receipt 810416
-                          Oe Cashback
-17/11/2024                                                                                                                                       110.00                          308.75Internal Transfer - Receipt 893934
-                          From Savings Maximiser 815723151
-19/11/2024                                                                                             -1.00                                                                        307.75Visa Purchase - Receipt 188786
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 17/11/24 Card 6522
-19/11/2024                                                                                             -1.00                                                                        306.75Visa Purchase - Receipt 188787
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 17/11/24 Card 6522
-19/11/2024                                                                                             -1.00                                                                        305.75Visa Purchase - Receipt 188788
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 17/11/24 Card 6522
-19/11/2024                                                                                             -1.00                                                                        304.75Visa Purchase - Receipt 188789
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 17/11/24 Card 6522
-19/11/2024                                                                                             -1.00                                                                        303.75Visa Purchase - Receipt 188790
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 17/11/24 Card 6522
-06/12/2024                                                                                            -90.65                                                                      213.10Direct Debit - Receipt 115662
-                          348045 Agl Sales Pty Lt 440012493869
-                          To 34238 032797
-06/12/2024                                                                                                                                       0.91                               214.01Cashback - Receipt 552415
-                          Oe Cashback
-06/12/2024                                                                                                                                       100.00                          314.01Internal Transfer - Receipt 501783
-                          From Savings Maximiser 815723151
-07/12/2024                                                                                                                                       1,000.00                       1,314.01Osko Deposit - Receipt 711829
-                          Yun Zhe Wong
-07/12/2024                                                                                            -1,000.00                                                                314.01Internal Transfer - Receipt 219188
-                          To Savings Maximiser 815723151
-11/12/2024                                                                                             -1.00                                                                        313.01Visa Purchase - Receipt 116459
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 09/12/24 Card 6522
-17/12/2024                                                                                            -1.00                                                                        312.01Visa Purchase - Receipt 105717
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 13/12/24 Card 6522
-17/12/2024                                                                                            -1.00                                                                        311.01Visa Purchase - Receipt 105718
-                          DOT MYKI RELOAD MELBOURNE
-                          Date 13/12/24 Card 6522
-
-
-
-
-
-Page 2 of 4 | Statement continued over
-####
-Transactions (continued)
-
-Date                 Details                                                                 Money out $               Money in $               Balance $
-
-17/12/2024                                                                                            -1.00                                                                        310.01Visa Purchase - Receipt 105719
-                         DOT MYKI RELOAD MELBOURNE
-                         Date 13/12/24 Card 6522
-17/12/2024                                                                                            -1.00                                                                        309.01Visa Purchase - Receipt 105720
-                         DOT MYKI RELOAD MELBOURNE
-                         Date 13/12/24 Card 6522
-17/12/2024                                                                                            -1.00                                                                        308.01Visa Purchase - Receipt 105721
-                         DOT MYKI RELOAD MELBOURNE
-                         Date 13/12/24 Card 6522
-
-Total Cashback Financial Year to Date: $9.10
-Total Cashback for this statement: $3.77
-Total Rebates Financial Year to Date: $0.00
-Total Rebates for this statement: $0.00
-Total Fees Financial Year to Date: $0.00
-Total Fees for this statement: $0.00
-Total Rounded Up to Charity Financial Year to Date*: $0.00
+Interest rate at end of statement period: 0.55% p.a.
+Total Interest Financial Year to Date: $732.85
+Total Interest for this statement: $453.14
+Tax File Number / Exemption Provided: Yes
 
 Please check all transactions carefully. If you believe there is an error or unauthorised transaction, or if you have
 any queries, please call us as soon as possible on 133 464.
-We recommend you retain a copy of your statement for taxation purposes and seek tax advice if required.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Page 2 of 3 | Statement continued over
+
+
+
+
+
+ING is a business name of ING Bank (Australia) Limited
+ABN 24 000 893 292 | AFSL and Australian Credit Licence 229823
+GPO Box 2682 Sydney NSW Australia 2001 | Phone 133 464 | ing.com.au####
 For the curious:
-
 Keeping you safe and secure
-ING takes the security of customers' accounts, transactions and information very seriously. It�s also important for you to take all reasonable precautions to ensure that
+ING takes the security of customers' accounts, transactions and information very seriously. It's also important for you to take all reasonable precautions to ensure that
 your codes and devices for your account are not misused and remain secure and confidential.  Please remember these security guidelines:
+     1.     Don't share your Codes (Access Code, PIN, any passcode you use to authenticate a transaction on your account and any additional security code we
+           provide you to conduct certain transactions - including one time passwords provided by SMS) with anyone. In some specific circumstances when speaking
+           with one of our Customer Care Specialists we may request a one-time password (as reflected in your Terms and Conditions booklet).
 
-     1.     Don�t share your Codes (Access Code, PIN, any passcode you use to authenticate a transaction on your account and any additional security code we provide
-          you to conduct certain transactions � including one time passwords provided by SMS) with anyone. In some specific circumstances when speaking with one
-          of our Customer Care Specialists we may request a one-time password (as reflected in your Terms and Conditions booklet).
      2.      Where you choose a Code make sure that it is difficult to guess. It should not be associated with your date of birth, Client Number, or name, or consist of
-          repeated, ascending or descending characters.
+           repeated, ascending or descending characters.
 
-     3.     If you have a Visa card on your account, don�t give it to anyone else or let anyone else use it.  If you have a virtual Visa card installed on a device, do not install
-          another person�s biometric identifiers on that device or share your device access code.
+     3.     If you have a Visa card on your account, don't give it to anyone else or let anyone else use it.  If you have a virtual Visa card installed on a device, do not
+           install another person's biometric identifiers on that device or share your device access code.
 
      4.     Avoid using computers that are shared with other unknown people for online banking, such as internet cafes and libraries.
 
-     5.     If you record your Code, store it in a safe place that is password protected, separate from your Client Number or any device you use to transact on the account.
+     5.     If you record your Code, store it in a safe place that is password protected, separate from your Client Number or any device you use to transact on the
+           account.
+
      6.     Use care to prevent anyone else seeing your Codes or PIN when being entered.
+
      7.     ING will never send you an email asking you to click on a link to access online banking, or to provide your Access Code, Security Code or PIN.
 
      8.     Please check all transactions carefully. If you think or suspect that there's been an error or unauthorised transaction, that anyone else knows any of your
-          Codes, or that any of your devices have been lost, stolen, or used without your permission, call us straight away on 133 464. If you don�t notify us
-          immediately when you realise or suspect anyone else knows your Codes you may be liable for any transactions that occur on your account.
+           Codes, or that any of your devices have been lost, stolen, or used without your permission, call us straight away on 133 464. If you don't notify us
+           immediately when you realise or suspect anyone else knows your Codes you may be liable for any transactions that occur on your account.
 
-We can cancel any access method associated with a Code at any time without notice if we believe it is being used in a way that can cause loss to you or us, and you
-may be liable for transactions on your account. You may also be liable for transactions where you or another user engage in fraud, voluntarily disclose Codes, or act
-with extreme carelessness. These guidelines do not set out all the circumstances in which you may be liable for unauthorised electronic transactions. Your liability for
+We can cancel any access method associated with a Code at any time without notice if we believe it is being used in a way that can cause loss to you or us, and you may
+be liable for transactions on your account. You may also be liable for transactions where you or another user engage in fraud, voluntarily disclose Codes, or act with
+extreme carelessness. These guidelines do not set out all the circumstances in which you may be liable for unauthorised electronic transactions. Your liability for
 unauthorised electronic transactions will be determined under the ePayments Code (as reflected in your Terms and Conditions booklet).
 
-*All Round Up to Charity transactions are donated, on your behalf, to Intelligent Foundation ABN 48 156 978 613 (a DeductibleGift Recipient). Intelligent Foundation
-delivers donations to other charities. Round Up to Charity transactions debited from your account within the last 14 days of the financial year will not be included in
-the current year�s total. Instead these Round Ups will be included in the following year�s total due to processing time.
-The total Round Up to Charity stated on your April �June statement reflects the amount donated on your behalf in that financial year. To find out more, please see the
-Orange Everyday Terms and Conditions.
+Any advice in this statement does not take into account your objectives, financial situation or needs and you should consider whether it is appropriate for you. Before
+making a decision in relation to any personal savings product, you should read the relevant Terms and Conditions booklet available at ing.com.au. If you have a
+complaint or need to speak with us visit ing.com.au/contactus as we have procedures in place to help resolve any issues you may have. Savings Maximiser, Savings
+Accelerator and Personal Term Deposits are issued by ING, a business name of ING Bank (Australia) Limited ABN 24 000 893 292, AFSL 229823.
 
 
 
@@ -216,11 +200,6 @@ Orange Everyday Terms and Conditions.
 
 
 
-Page 3 of 4 | Statement continued over####Any advice in this statement does not take into account your objectives, financial situation or needs and you should consider whether it is appropriate for you. Before
-making any decision in relation to an Orange Everyday or Orange Everyday Youth, you should read the Orange Everyday and Orange Everyday Youth Terms and
-Conditions booklet, the Everyday Banking Fees and Limits schedule and the Orange Everyday Benefits Schedule available at ing.com.au. If you have a complaint or
-need to speak with us visit ing.com.au/contactus  as we have procedures in place to help resolve any issues you may have. Orange Everyday is issued by ING, a
-business name of ING Bank (Australia) Limited ABN 24 000 893 292, AFSL 229823.
 
 
 
@@ -250,55 +229,8 @@ business name of ING Bank (Australia) Limited ABN 24 000 893 292, AFSL 229823.
 
 
 
+Page 3 of 3
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Page 4 of 4
 
 
 

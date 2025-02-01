@@ -199,6 +199,8 @@ def read_transaction_data(line: str, month_range: List[str]):
 
 
 def get_transaction_type_and_amount(value: float, desc: str):
+    if "Interest" in desc:
+        return TransactionType.Interest, value
 
     lowercase_desc = desc.lower()
     if "future saver" in lowercase_desc or "yun zhe wong" in lowercase_desc:

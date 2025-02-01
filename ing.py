@@ -3,20 +3,50 @@ from typing import List
 from pypdf import PdfReader
 from dates import get_month_abbreviation
 from files import get_layout_page_data, manage_files
+from floats import float_close
+from printing import valid_print
 from search import search
 from transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_EVERYDAY = "data/ING/Everyday/raw"
 OUTPUT_EVERYDAY = "data/ING/Everyday"
+INPUT_SAVINGS = "data/ING/Savings/raw"
+OUTPUT_SAVINGS = "data/ING/Savings"
 
 
 class ValidationData:
     def __init__(self, numbers: List[float]):
         self.opening = numbers[0]
         self.credits = numbers[1]
-        self.debits = numbers[2]
+        self.debits = -1 * numbers[2]
         self.closing = numbers[3]
+
+    def check(self, transactions: List[Transaction]):
+        debits = 0.0
+        credits = 0.0
+        interest = 0.0
+
+        for transaction in transactions:
+            if transaction.type in [TransactionType.TransferIn, TransactionType.Credit]:
+                credits += transaction.amount
+            elif transaction.type == TransactionType.Interest:
+                interest += transaction.amount
+            else:
+                debits += transaction.amount
+
+        balance_diff = self.closing - self.opening
+        change = self.credits - self.debits
+
+        assert float_close(balance_diff, change + interest)
+        valid_print(f"Difference in Balance: {balance_diff:.2f} / {change:.2f}")
+        valid_print(f"Interest: {interest:.2f}")
+
+        assert float_close(credits, self.credits)
+        valid_print(f"Difference in Credits: {credits:.2f} / {self.credits:.2f}")
+
+        assert float_close(debits, self.debits)
+        valid_print(f"Difference in Debits: {debits:.2f} / {self.debits:.2f}")
 
 
 def get_validation_line(first_page: str):
@@ -37,6 +67,7 @@ def get_validation_numbers(line: str):
 def get_validation_data(first_page: str):
     validation_line = get_validation_line(first_page)
     numbers = get_validation_numbers(validation_line)
+    return ValidationData(numbers)
 
 
 def get_month_string(first_page: str):
@@ -75,7 +106,12 @@ def get_transaction_lines(transaction_pages: List[str]):
         balance_index = page.find("Balance $")
         start_index = page.find("\n", balance_index) + 1
 
+        # Everyday
         end_index = page.find("Total Cashback Financial Year to Date:")
+
+        # Savings
+        if end_index == -1:
+            end_index = page.find("Interest rate at end of statement period:")
 
         if end_index == -1:
             end_index = page.find("Statement continued over")
@@ -108,6 +144,9 @@ def read_line_data(line: str):
 
 
 def get_type_and_amount(amount: float, transaction_desc: str):
+    if "Interest" in transaction_desc:
+        return TransactionType.Interest, amount
+
     if "Osko Deposit" in transaction_desc or "Internal Transfer" in transaction_desc:
         if amount < 0:
             return TransactionType.TransferOut, -amount
@@ -136,31 +175,36 @@ def get_transactions(lines: List[str]):
                 transactions.append(Transaction(data[0], amount, type, data[1]))
             data = (date, "", value, transaction_desc)
 
+    if data is not None:
+        type, amount = get_type_and_amount(data[2], data[3])
+        transactions.append(Transaction(data[0], amount, type, data[1]))
+
     return transactions
 
 
 def get_data(reader: PdfReader):
-    # page_data = [page.extract_text(extraction_mode="layout") for page in reader.pages]
+    page_data = [page.extract_text(extraction_mode="layout") for page in reader.pages]
     # with open("temp.txt", "w") as f:
     #     for page in page_data:
     #         f.write(page)
     #         f.write("####\n")
-    with open("temp.txt", "r") as f:
-        text = "\n".join(f.readlines())
-        page_data = text.split("####\n")
+    # return
+    # with open("temp.txt", "r") as f:
+    #     text = "\n".join(f.readlines())
+    #     page_data = text.split("####\n")
 
-    get_validation_data(page_data[0])
+    validation_data = get_validation_data(page_data[0])
     month_range = get_month_range(page_data[0])
 
     transaction_pages = get_transaction_pages(page_data)
     transaction_lines = get_transaction_lines(transaction_pages)
     transactions = get_transactions(transaction_lines)
 
-    # for t in transactions:
-    #     print(t)
+    validation_data.check(transactions)
 
     return month_range, transactions
 
 
 if __name__ == "__main__":
     manage_files(INPUT_EVERYDAY, OUTPUT_EVERYDAY, get_data)
+    manage_files(INPUT_SAVINGS, OUTPUT_SAVINGS, get_data)

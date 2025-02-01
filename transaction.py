@@ -7,6 +7,7 @@ class TransactionType(Enum):
     Credit = "Credit"
     TransferIn = "Transfer In"
     TransferOut = "Transfer Out"
+    Interest = "Interest"
 
 
 class Transaction:
