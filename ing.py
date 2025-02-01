@@ -85,12 +85,6 @@ def convert_ddmmyyyy_to_abryy(ddmmyyyy: str):
     return month_abr + yy
 
 
-def get_month_range(first_page: str):
-    month_string = get_month_string(first_page)
-    dates = month_string.split(" to ")
-    return [convert_ddmmyyyy_to_abryy(date) for date in dates]
-
-
 def get_transaction_pages(page_data: List[str]):
     pages = []
     for page in page_data:
@@ -182,19 +176,16 @@ def get_transactions(lines: List[str]):
     return transactions
 
 
-def get_data(reader: PdfReader):
-    page_data = [page.extract_text(extraction_mode="layout") for page in reader.pages]
-    # with open("temp.txt", "w") as f:
-    #     for page in page_data:
-    #         f.write(page)
-    #         f.write("####\n")
-    # return
-    # with open("temp.txt", "r") as f:
-    #     text = "\n".join(f.readlines())
-    #     page_data = text.split("####\n")
+def get_month_range(reader: PdfReader):
+    first_page = reader.pages[0].extract_text(extraction_mode="layout")
+    month_string = get_month_string(first_page)
+    dates = month_string.split(" to ")
+    return [convert_ddmmyyyy_to_abryy(date) for date in dates]
 
+
+def get_data(reader: PdfReader, month_range: List[str]):
+    page_data = [page.extract_text(extraction_mode="layout") for page in reader.pages]
     validation_data = get_validation_data(page_data[0])
-    month_range = get_month_range(page_data[0])
 
     transaction_pages = get_transaction_pages(page_data)
     transaction_lines = get_transaction_lines(transaction_pages)
@@ -202,9 +193,13 @@ def get_data(reader: PdfReader):
 
     validation_data.check(transactions)
 
-    return month_range, transactions
+    return transactions
 
 
 if __name__ == "__main__":
-    manage_files(INPUT_EVERYDAY, OUTPUT_EVERYDAY, get_data)
-    manage_files(INPUT_SAVINGS, OUTPUT_SAVINGS, get_data)
+    valid_print("Everyday Account: ")
+    manage_files(INPUT_EVERYDAY, OUTPUT_EVERYDAY, get_month_range, get_data)
+
+    print()
+    valid_print("Savings Statements: ")
+    manage_files(INPUT_SAVINGS, OUTPUT_SAVINGS, get_month_range, get_data)

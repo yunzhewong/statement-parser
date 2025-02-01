@@ -318,7 +318,11 @@ def identify_transactions(payments: List[str]):
     return transactions
 
 
-def get_month_range(pages_text: List[str]):
+def get_month_range(reader: PdfReader):
+    if not reader.decrypt(PASSWORD):
+        raise Exception("PDF Not Decryptable")
+
+    pages_text = get_page_text(reader)
     for page_text in pages_text:
         lines = page_text.split("\n")
         for line in lines:
@@ -341,12 +345,11 @@ def get_month_range(pages_text: List[str]):
     raise Exception("Expected Month Range")
 
 
-def get_pdf_data(reader: PdfReader):
+def get_pdf_data(reader: PdfReader, month_range: List[str]):
     if not reader.decrypt(PASSWORD):
         raise Exception("PDF Not Decryptable")
 
     pages_text = get_page_text(reader)
-    month_range = get_month_range(pages_text)
     transaction_pages_text = get_transaction_pages_text(pages_text)
     transaction_text = [get_transaction_text(page) for page in transaction_pages_text]
     start, transaction_lines, end = get_transaction_lines(transaction_text)
@@ -365,8 +368,8 @@ def get_pdf_data(reader: PdfReader):
 
     validation_data.check(parsed_transactions)
 
-    return month_range, parsed_transactions
+    return parsed_transactions
 
 
 if __name__ == "__main__":
-    manage_files(INPUT_PATH, OUTPUT_PATH, get_pdf_data)
+    manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)

@@ -57,7 +57,8 @@ def get_layout_page_data(reader: PdfReader):
 def manage_files(
     input_path: str,
     output_path: str,
-    get_data: Callable[[PdfReader], Tuple[List[str], List[Transaction]]],
+    get_month_range: Callable[[PdfReader], List[str]],
+    get_data: Callable[[PdfReader, List[str]], List[Transaction]],
 ):
     force = should_force(sys.argv)
     log = should_log(sys.argv)
@@ -66,7 +67,7 @@ def manage_files(
     for filename in filenames:
         file_path = os.path.join(input_path, filename)
         reader = PdfReader(file_path)
-        month_range, transactions = get_data(reader)
+        month_range = get_month_range(reader)
         reader.close()
 
         output_name = month_range_to_file_name(month_range)
@@ -74,6 +75,8 @@ def manage_files(
         if not force and pdf_name == filename:
             print(f"{output_name} skipped")
             continue
+        reader = PdfReader(file_path)
+        transactions = get_data(reader, month_range)
 
         if log:
             for transaction in transactions:
@@ -81,3 +84,4 @@ def manage_files(
 
         os.rename(file_path, os.path.join(input_path, pdf_name))
         export_to_csv(output_path, output_name + ".csv", transactions)
+        print()

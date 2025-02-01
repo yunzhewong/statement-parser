@@ -127,23 +127,28 @@ def extract_transactions(page: str, month_range: List[str]):
     return list(filter(lambda x: x is not None, results))
 
 
-def extract_data(transaction_page_text: List[str]):
-    month_range = extract_statement_dates(transaction_page_text[0])
-    transactions = []
-    for page in transaction_page_text:
-        transactions += extract_transactions(page, month_range)
-
-    return month_range, transactions
-
-
-def get_pdf_data(pdf: PdfReader):
-    if not pdf.decrypt(PASSWORD):
+def decrypt_and_get_data(reader: PdfReader):
+    if not reader.decrypt(PASSWORD):
         raise Exception("PDF Not Decryptable")
 
-    transaction_page_text = get_transaction_page_text(pdf)
+    return get_transaction_page_text(reader)
 
-    return extract_data(transaction_page_text)
+
+def get_month_range(reader: PdfReader):
+    page_data = decrypt_and_get_data(reader)
+    month_range = extract_statement_dates(page_data[0])
+    return month_range
+
+
+def get_pdf_data(reader: PdfReader, month_range: List[str]):
+    page_data = decrypt_and_get_data(reader)
+
+    transactions = []
+    for page in page_data:
+        transactions += extract_transactions(page, month_range)
+
+    return transactions
 
 
 if __name__ == "__main__":
-    manage_files(INPUT_PATH, OUTPUT_PATH, get_pdf_data)
+    manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)

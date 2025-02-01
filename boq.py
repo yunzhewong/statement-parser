@@ -104,11 +104,6 @@ def dates_string_to_month_range(dates_string: str):
     return [start, end]
 
 
-def get_month_range(first_page: str):
-    dates_string = extract_dates_string(first_page)
-    return dates_string_to_month_range(dates_string)
-
-
 def get_transaction_pages(pages: List[str]):
     output = []
     for page in pages:
@@ -243,19 +238,25 @@ def extract_transactions(lines: List[str], month_range: List[str]):
     return transactions
 
 
-def get_data(reader: PdfReader):
+def get_month_range(reader: PdfReader):
     pages = get_layout_page_data(reader)
+    dates_string = extract_dates_string(pages[0])
+    return dates_string_to_month_range(dates_string)
+
+
+def get_data(reader: PdfReader, month_range: List[str]):
+    pages = get_layout_page_data(reader)
+
     validation_data = get_validation_data(pages[0])
-    month_range = get_month_range(pages[0])
     transaction_pages = get_transaction_pages(pages)
     transaction_lines = get_transaction_lines(transaction_pages)
     transactions = extract_transactions(transaction_lines, month_range)
 
     validation_data.check(transactions)
 
-    return month_range, transactions
+    return transactions
 
 
 if __name__ == "__main__":
-    manage_files(INPUT_PATH_EVERYDAY, OUTPUT_PATH_EVERYDAY, get_data)
-    manage_files(INPUT_PATH_SAVINGS, OUTPUT_PATH_SAVINGS, get_data)
+    manage_files(INPUT_PATH_EVERYDAY, OUTPUT_PATH_EVERYDAY, get_month_range, get_data)
+    manage_files(INPUT_PATH_SAVINGS, OUTPUT_PATH_SAVINGS, get_month_range, get_data)
