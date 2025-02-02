@@ -1,7 +1,6 @@
 from typing import Dict, List, Tuple
 from pypdf import PdfReader
 from datetime import datetime
-import logging
 
 from dates import format_date, get_month_value, get_date_string_year
 from files import manage_files
@@ -10,8 +9,6 @@ from printing import valid_print
 from transaction import Transaction, TransactionType, parse_money
 from files import get_password
 
-logger = logging.getLogger("pypdf")
-logger.setLevel(logging.ERROR)
 
 INPUT_PATH = "data/HSBC/raw"
 OUTPUT_PATH = "data/HSBC"

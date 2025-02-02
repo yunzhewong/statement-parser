@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import os
 import sys
 from typing import Callable, List, Tuple
@@ -9,6 +10,9 @@ from pypdf import PdfReader
 from dates import month_range_to_file_name
 from printing import error_print, valid_print
 from transaction import Transaction
+
+logger = logging.getLogger("pypdf")
+logger.setLevel(logging.ERROR)
 
 
 def should_force(argv: List[str]):

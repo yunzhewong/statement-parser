@@ -61,3 +61,18 @@ def get_date_string_year(month_string: str, month_range: List[str]):
             return int("20" + string[3:5])
 
     raise Exception("Expected to find year")
+
+
+def extract_month_string(month_abbreviation: str, year_string: str):
+    return month_abbreviation + year_string[2:]
+
+
+def parse_dashed_month_range(dashed_month_range: str):
+    separated = dashed_month_range.split(" ")
+
+    if len(separated) != 7:
+        raise Exception("Expected 7 Elements")
+
+    start = extract_month_string(separated[1], separated[2])
+    end = extract_month_string(separated[5], separated[6])
+    return [start, end]

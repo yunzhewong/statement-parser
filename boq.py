@@ -2,7 +2,12 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 
-from dates import get_date_string_month, get_month_value, get_date_string_year
+from dates import (
+    get_date_string_month,
+    get_month_value,
+    get_date_string_year,
+    parse_dashed_month_range,
+)
 from files import get_layout_page_data, manage_files
 
 from floats import float_close
@@ -86,22 +91,7 @@ def extract_dates_string(first_page: str):
     start_index, _ = search(list(first_page), start_index + 1, 1, lambda x: x == " ")
 
     end_index = first_page.find("\n", start_index)
-    return first_page[start_index:end_index]
-
-
-def extract_month_string(month_abbreviation: str, year_string: str):
-    return month_abbreviation + year_string[2:]
-
-
-def dates_string_to_month_range(dates_string: str):
-    separated = dates_string.strip().split(" ")
-
-    if len(separated) != 7:
-        raise Exception("Expected 7 Elements")
-
-    start = extract_month_string(separated[1], separated[2])
-    end = extract_month_string(separated[5], separated[6])
-    return [start, end]
+    return first_page[start_index:end_index].strip()
 
 
 def get_transaction_pages(pages: List[str]):
@@ -241,7 +231,7 @@ def extract_transactions(lines: List[str], month_range: List[str]):
 def get_month_range(reader: PdfReader):
     pages = get_layout_page_data(reader)
     dates_string = extract_dates_string(pages[0])
-    return dates_string_to_month_range(dates_string)
+    return parse_dashed_month_range(dates_string)
 
 
 def get_data(reader: PdfReader, month_range: List[str]):

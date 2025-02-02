@@ -20,6 +20,7 @@ def get_page_text(reader: PdfReader):
 def get_transaction_page_text(reader: PdfReader):
     output = []
 
+    # first page not parsable for some reason
     for page in reader.pages[1:]:
 
         page_text = page.extract_text(extraction_mode="layout")
