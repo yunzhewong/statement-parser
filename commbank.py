@@ -1,8 +1,10 @@
-from typing import List
+from datetime import datetime
+from typing import List, Tuple
 from pypdf import PdfReader
-from dates import parse_dashed_month_range
+from dates import get_date_between_years, get_month_value, parse_dashed_month_range
 from files import manage_files
 from search import search
+from transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_PATH = "data/Commbank/raw"
@@ -11,6 +13,27 @@ OUTPUT_PATH = "data/Commbank"
 
 def get_page_data(reader: PdfReader):
     return [page.extract_text(extraction_mode="layout") for page in reader.pages]
+
+
+def get_validation_data(page_data: List[str]):
+    page = get_validation_page(page_data)
+    closing_balance_index = page.find("Closing balance")
+    first_newline = page.find("\n", closing_balance_index)
+
+    print(page[index:])
+
+
+def get_validation_page(page_data: List[str]):
+    keywords = ["Opening balance", "Total debits", "Total credits", "Closing balance"]
+    for page in page_data:
+        all_found = True
+        for keyword in keywords:
+            if keyword not in page:
+                all_found = False
+        if all_found:
+            return page
+
+    raise Exception("Expected validation page")
 
 
 def get_month_string(first_page: str):
@@ -92,14 +115,74 @@ def get_transaction_lines(transaction_pages: List[str]):
     return lines
 
 
+def aggregate_lines(lines: List[str], month_range: List[str]):
+    aggregated: List[Tuple[datetime, str]] = []
+    aggregate = None
+
+    for line in lines:
+        if len(line) >= 6:
+            month_section = line[3:6]
+            month_value = get_month_value(month_section)
+            if month_value is not None:
+                day = int(line[0:2])
+                date = get_date_between_years(day, month_value, month_range)
+                if aggregate is not None:
+                    aggregated.append(aggregate)
+                aggregate = (date, line[6:].strip())
+                continue
+
+        if aggregate is None:
+            raise Exception("Expected Aggregate")
+        aggregate = (aggregate[0], aggregate[1] + " " + line)
+    return aggregated
+
+
+def parse_possible_dollar_signed_number(s: str):
+    return parse_money(s.replace("$", ""))
+
+
+def parse_amount_and_type(value: float, desc: str):
+    if "Transfer" in desc:
+        if value < 0:
+            return -value, TransactionType.TransferOut
+        return value, TransactionType.TransferIn
+
+    if value < 0:
+        return -value, TransactionType.CardPayment
+
+    return value, TransactionType.Credit
+
+
+def get_transactions(aggregated: List[Tuple[datetime, str]]):
+    transactions = []
+    for item in aggregated:
+        date, full_str = item
+
+        chunks = list(filter(lambda x: x != "", full_str.split("  ")))
+        trimmed = [s.strip() for s in chunks]
+
+        multiplier = -1
+        if len(trimmed) == 3:
+            multiplier = 1
+
+        value = multiplier * parse_possible_dollar_signed_number(trimmed[1])
+        desc = trimmed[0]
+        amount, type = parse_amount_and_type(value, desc)
+        transactions.append(Transaction(date, amount, type, desc))
+
+    return transactions
+
+
 def get_data(reader: PdfReader, month_range: List[str]):
     page_data = get_page_data(reader)
+
+    validation_data = get_validation_data(page_data)
+
     transaction_pages = get_transaction_pages(page_data)
     lines = get_transaction_lines(transaction_pages)
-    for line in lines:
-        print(line)
-
-    return []
+    aggregated = aggregate_lines(lines, month_range)
+    transactions = get_transactions(aggregated[1:-1])
+    return transactions
 
 
 if __name__ == "__main__":

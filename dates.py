@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 
@@ -65,6 +66,18 @@ def get_date_string_year(month_string: str, month_range: List[str]):
 
 def extract_month_string(month_abbreviation: str, year_string: str):
     return month_abbreviation + year_string[2:]
+
+
+def get_date_between_years(day: int, month_value: int, month_range: List[str]):
+    low_year = get_date_string_year(month_range[0], month_range)
+    high_year = get_date_string_year(month_range[1], month_range)
+
+    low_month = get_date_string_month(month_range[0])
+    high_month = get_date_string_month(month_range[1])
+    if month_value > low_month:
+        if month_value < high_month:
+            return datetime(low_year, month_value, day)
+    return datetime(high_year, month_value, day)
 
 
 def parse_dashed_month_range(dashed_month_range: str):

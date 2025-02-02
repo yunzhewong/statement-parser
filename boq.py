@@ -3,6 +3,7 @@ from typing import List, Tuple
 from pypdf import PdfReader
 
 from dates import (
+    get_date_between_years,
     get_date_string_month,
     get_month_value,
     get_date_string_year,
@@ -153,16 +154,7 @@ def read_date(date_string: str, month_range: List[str]):
         raise Exception("Expected two items")
     day = int(separated[0])
     month = get_month_value(separated[1])
-    low_year = get_date_string_year(month_range[0], month_range)
-    high_year = get_date_string_year(month_range[1], month_range)
-
-    low_month = get_date_string_month(month_range[0])
-    high_month = get_date_string_month(month_range[1])
-
-    if month > low_month:
-        if month < high_month:
-            return datetime(low_year, month, day)
-    return datetime(high_year, month, day)
+    return get_date_between_years(day, month, month_range)
 
 
 def get_amount(items: List[str]):
