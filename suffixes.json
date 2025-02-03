@@ -1,0 +1,9 @@
+{
+  "boq-everyday": "data/BOQ/Everyday",
+  "boq-savings": "data/BOQ/Savings",
+  "coles": "data/Coles",
+  "commbank": "data/Commbank",
+  "hsbc": "data/HSBC",
+  "ing-everyday": "data/ING/Everyday",
+  "ing-savings":"data/ING/Savings"
+}

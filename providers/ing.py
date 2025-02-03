@@ -2,15 +2,15 @@ from datetime import datetime
 from typing import List
 from pypdf import PdfReader
 from lib.dates import get_month_abbreviation
-from lib.files import get_layout_page_data, manage_files
+from lib.files import get_layout_page_data, get_suffix, manage_files
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
 from lib.search import search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-SUFFIX_EVERYDAY = "data/ING/Everyday"
-SUFFIX_SAVINGS = "data/ING/Savings"
+SUFFIX_EVERYDAY = get_suffix("ing-everyday")
+SUFFIX_SAVINGS = get_suffix("ing-savings")
 
 
 class ValidationData:

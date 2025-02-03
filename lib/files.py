@@ -50,13 +50,21 @@ def export_to_csv(output_path: str, name: str, transactions: List[Transaction]):
     valid_print(f"{name} written, {len(transactions)} transactions")
 
 
-def get_password(key: str) -> str:
+def get_json_value(filename: str, key: str):
     current_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    with open(os.path.join(current_directory, "passwords.json")) as password_file:
-        passwords = json.load(password_file)
-        return passwords[key]
-    raise Exception("Fill passwords.json")
+    with open(os.path.join(current_directory, filename)) as file:
+        data = json.load(file)
+        return data[key]
+    raise Exception(f"Fill {filename}: {key}")
+
+
+def get_password(key: str) -> str:
+    return get_json_value("passwords.json", key)
+
+
+def get_suffix(key: str) -> str:
+    return get_json_value("suffixes.json", key)
 
 
 def get_layout_page_data(reader: PdfReader):

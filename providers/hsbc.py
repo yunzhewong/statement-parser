@@ -3,14 +3,14 @@ from pypdf import PdfReader
 from datetime import datetime
 
 from lib.dates import format_date, get_month_value, get_date_string_year
-from lib.files import manage_files
+from lib.files import get_password, manage_files
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
 from lib.transaction import Transaction, TransactionType, parse_money
-from lib.files import get_password
+from lib.files import get_suffix
 
 
-SUFFIX = "data/HSBC"
+SUFFIX = get_suffix("hsbc")
 PASSWORD = get_password("hsbc")
 
 

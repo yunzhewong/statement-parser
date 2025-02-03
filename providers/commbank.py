@@ -2,14 +2,14 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 from lib.dates import get_date_between_years, get_month_value, parse_dashed_month_range
-from lib.files import manage_files
+from lib.files import get_suffix, manage_files
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
 from lib.search import search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-SUFFIX = "data/Commbank"
+SUFFIX = get_suffix("commbank")
 
 
 class ValidationData:

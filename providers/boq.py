@@ -9,7 +9,7 @@ from lib.dates import (
     get_date_string_year,
     parse_dashed_month_range,
 )
-from lib.files import get_layout_page_data, manage_files
+from lib.files import get_layout_page_data, get_suffix, manage_files
 
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
@@ -17,9 +17,9 @@ from lib.search import search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-SUFFIX_EVERYDAY = "data/BOQ/Everyday"
+SUFFIX_EVERYDAY = get_suffix("boq-everyday")
 
-SUFFIX_SAVINGS = "data/BOQ/Savings"
+SUFFIX_SAVINGS = get_suffix("boq-savings")
 
 
 class ValidationData:
