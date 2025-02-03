@@ -64,14 +64,17 @@ def get_layout_page_data(reader: PdfReader):
 
 
 def manage_files(
-    input_path: str,
-    output_path: str,
+    suffix: str,
     get_month_range: Callable[[PdfReader], List[str]],
     get_data: Callable[[PdfReader, List[str]], List[Transaction]],
 ):
     force = should_force(sys.argv)
     log = should_log(sys.argv)
     quick = should_quick(sys.argv)
+
+    input_path = suffix + "/raw"
+    output_path = suffix
+
     filenames = get_filenames(input_path)
 
     for filename in filenames:

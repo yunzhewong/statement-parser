@@ -10,8 +10,7 @@ from lib.transaction import Transaction, TransactionType, parse_money
 from lib.files import get_password
 
 
-INPUT_PATH = "data/HSBC/raw"
-OUTPUT_PATH = "data/HSBC"
+SUFFIX = "data/HSBC"
 PASSWORD = get_password("hsbc")
 
 
@@ -370,7 +369,7 @@ def get_pdf_data(reader: PdfReader, month_range: List[str]):
 
 def handle_hsbc():
     blue_print("HSBC")
-    manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)
+    manage_files(SUFFIX, get_month_range, get_pdf_data)
     print()
 
 

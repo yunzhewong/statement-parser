@@ -9,8 +9,7 @@ from lib.search import search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-INPUT_PATH = "data/Commbank/raw"
-OUTPUT_PATH = "data/Commbank"
+SUFFIX = "data/Commbank"
 
 
 class ValidationData:
@@ -249,7 +248,7 @@ def get_data(reader: PdfReader, month_range: List[str]):
 
 def handle_commbank():
     blue_print("COMMONWEALTH BANK")
-    manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_data)
+    manage_files(SUFFIX, get_month_range, get_data)
     print()
 
 

@@ -8,8 +8,7 @@ from lib.search import find_index_prior_to_newline, search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-INPUT_PATH = "data/Coles/raw"
-OUTPUT_PATH = "data/Coles"
+SUFFIX = "data/Coles"
 PASSWORD = get_password("coles")
 
 
@@ -153,7 +152,7 @@ def get_pdf_data(reader: PdfReader, month_range: List[str]):
 
 def handle_coles():
     blue_print("COLES")
-    manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)
+    manage_files(SUFFIX, get_month_range, get_pdf_data)
     print()
 
 

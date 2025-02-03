@@ -17,11 +17,9 @@ from lib.search import search
 from lib.transaction import Transaction, TransactionType, parse_money
 
 
-INPUT_PATH_EVERYDAY = "data/BOQ/Everyday/raw"
-OUTPUT_PATH_EVERYDAY = "data/BOQ/Everyday"
+SUFFIX_EVERYDAY = "data/BOQ/Everyday"
 
-INPUT_PATH_SAVINGS = "data/BOQ/Savings/raw"
-OUTPUT_PATH_SAVINGS = "data/BOQ/Savings"
+SUFFIX_SAVINGS = "data/BOQ/Savings"
 
 
 class ValidationData:
@@ -242,11 +240,11 @@ def get_data(reader: PdfReader, month_range: List[str]):
 def handle_boq():
     blue_print("BOQ")
     valid_print("Everyday Account: ")
-    manage_files(INPUT_PATH_EVERYDAY, OUTPUT_PATH_EVERYDAY, get_month_range, get_data)
+    manage_files(SUFFIX_EVERYDAY, get_month_range, get_data)
     print()
 
     valid_print("Savings Account: ")
-    manage_files(INPUT_PATH_SAVINGS, OUTPUT_PATH_SAVINGS, get_month_range, get_data)
+    manage_files(SUFFIX_SAVINGS, get_month_range, get_data)
     print()
 
 
