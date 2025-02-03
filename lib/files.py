@@ -7,9 +7,9 @@ from typing import Callable, List, Tuple
 
 from pypdf import PdfReader
 
-from dates import month_range_to_file_name
-from printing import error_print, valid_print
-from transaction import Transaction
+from lib.dates import month_range_to_file_name
+from lib.printing import error_print, valid_print
+from lib.transaction import Transaction
 
 logger = logging.getLogger("pypdf")
 logger.setLevel(logging.ERROR)
@@ -21,6 +21,10 @@ def should_force(argv: List[str]):
 
 def should_log(argv: List[str]):
     return "l" in argv[1:]
+
+
+def should_quick(argv: List[str]):
+    return "q" in argv[1:]
 
 
 def get_filenames(path: str):
@@ -47,7 +51,8 @@ def export_to_csv(output_path: str, name: str, transactions: List[Transaction]):
 
 
 def get_password(key: str) -> str:
-    current_directory = os.path.dirname(os.path.abspath(__file__))
+    current_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     with open(os.path.join(current_directory, "passwords.json")) as password_file:
         passwords = json.load(password_file)
         return passwords[key]
@@ -66,9 +71,14 @@ def manage_files(
 ):
     force = should_force(sys.argv)
     log = should_log(sys.argv)
+    quick = should_quick(sys.argv)
     filenames = get_filenames(input_path)
 
     for filename in filenames:
+        if not force and not quick and filename_is_already_range(filename):
+            print(f"{filename} skipped")
+            continue
+
         file_path = os.path.join(input_path, filename)
         reader = PdfReader(file_path)
         month_range = get_month_range(reader)
@@ -76,7 +86,8 @@ def manage_files(
 
         output_name = month_range_to_file_name(month_range)
         pdf_name = output_name + ".pdf"
-        if not force and pdf_name == filename:
+
+        if quick and pdf_name == filename:
             print(f"{output_name} skipped")
             continue
         reader = PdfReader(file_path)
@@ -89,3 +100,23 @@ def manage_files(
         os.rename(file_path, os.path.join(input_path, pdf_name))
         export_to_csv(output_path, output_name + ".csv", transactions)
         print()
+
+
+def filename_is_already_range(filename: str):
+    name = filename[: -len(".pdf")]
+    if len(name) != 18:
+        return False
+
+    try:
+        _low_year = int(name[0:4])
+        _low_month = int(name[5:7])
+
+        if name[8:10] != "to":
+            return False
+
+        _high_year = int(name[11:15])
+        _high_month = int(name[17:18])
+    except:
+        return False
+
+    return True

@@ -14,6 +14,10 @@ def colored_print(text: str, color: str):
     print(color + text + bcolors.ENDC)
 
 
+def blue_print(text: str):
+    colored_print(text, bcolors.OKBLUE)
+
+
 def valid_print(text: str):
     colored_print(text, bcolors.OKGREEN)
 

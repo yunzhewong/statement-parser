@@ -28,3 +28,13 @@ class Transaction:
 
 def parse_money(money: str):
     return float("".join(money.split(",")))
+
+
+def parse_transaction(line: str):
+    sections = line.split(",")
+
+    date = datetime.strptime(sections[1], "%Y-%m-%d %H:%M:%S")
+    desc = sections[2]
+    amount = float(sections[3])
+    type = TransactionType(sections[4])
+    return Transaction(date, amount, type, desc)

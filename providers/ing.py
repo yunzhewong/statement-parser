@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import List
 from pypdf import PdfReader
-from dates import get_month_abbreviation
-from files import get_layout_page_data, manage_files
-from floats import float_close
-from printing import valid_print
-from search import search
-from transaction import Transaction, TransactionType, parse_money
+from lib.dates import get_month_abbreviation
+from lib.files import get_layout_page_data, manage_files
+from lib.floats import float_close
+from lib.printing import blue_print, valid_print
+from lib.search import search
+from lib.transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_EVERYDAY = "data/ING/Everyday/raw"
@@ -196,10 +196,16 @@ def get_data(reader: PdfReader, month_range: List[str]):
     return transactions
 
 
-if __name__ == "__main__":
+def handle_ing():
+    blue_print("ING")
     valid_print("Everyday Account: ")
     manage_files(INPUT_EVERYDAY, OUTPUT_EVERYDAY, get_month_range, get_data)
-
     print()
-    valid_print("Savings Statements: ")
+
+    valid_print("Savings Account: ")
     manage_files(INPUT_SAVINGS, OUTPUT_SAVINGS, get_month_range, get_data)
+    print()
+
+
+if __name__ == "__main__":
+    handle_ing()

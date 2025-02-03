@@ -2,12 +2,12 @@ from typing import Dict, List, Tuple
 from pypdf import PdfReader
 from datetime import datetime
 
-from dates import format_date, get_month_value, get_date_string_year
-from files import manage_files
-from floats import float_close
-from printing import valid_print
-from transaction import Transaction, TransactionType, parse_money
-from files import get_password
+from lib.dates import format_date, get_month_value, get_date_string_year
+from lib.files import manage_files
+from lib.floats import float_close
+from lib.printing import blue_print, valid_print
+from lib.transaction import Transaction, TransactionType, parse_money
+from lib.files import get_password
 
 
 INPUT_PATH = "data/HSBC/raw"
@@ -368,5 +368,11 @@ def get_pdf_data(reader: PdfReader, month_range: List[str]):
     return parsed_transactions
 
 
-if __name__ == "__main__":
+def handle_hsbc():
+    blue_print("HSBC")
     manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)
+    print()
+
+
+if __name__ == "__main__":
+    handle_hsbc()

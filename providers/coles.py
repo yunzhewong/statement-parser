@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import Callable, List
 from pypdf import PdfReader
-from dates import get_month_value, get_date_string_year
-from files import get_password, manage_files
-from printing import warning_print
-from search import find_index_prior_to_newline, search
-from transaction import Transaction, TransactionType, parse_money
+from lib.dates import get_month_value, get_date_string_year
+from lib.files import get_password, manage_files
+from lib.printing import blue_print, warning_print
+from lib.search import find_index_prior_to_newline, search
+from lib.transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_PATH = "data/Coles/raw"
@@ -151,5 +151,11 @@ def get_pdf_data(reader: PdfReader, month_range: List[str]):
     return transactions
 
 
-if __name__ == "__main__":
+def handle_coles():
+    blue_print("COLES")
     manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_pdf_data)
+    print()
+
+
+if __name__ == "__main__":
+    handle_coles()

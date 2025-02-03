@@ -2,19 +2,19 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 
-from dates import (
+from lib.dates import (
     get_date_between_years,
     get_date_string_month,
     get_month_value,
     get_date_string_year,
     parse_dashed_month_range,
 )
-from files import get_layout_page_data, manage_files
+from lib.files import get_layout_page_data, manage_files
 
-from floats import float_close
-from printing import valid_print
-from search import search
-from transaction import Transaction, TransactionType, parse_money
+from lib.floats import float_close
+from lib.printing import blue_print, valid_print
+from lib.search import search
+from lib.transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_PATH_EVERYDAY = "data/BOQ/Everyday/raw"
@@ -239,6 +239,16 @@ def get_data(reader: PdfReader, month_range: List[str]):
     return transactions
 
 
-if __name__ == "__main__":
+def handle_boq():
+    blue_print("BOQ")
+    valid_print("Everyday Account: ")
     manage_files(INPUT_PATH_EVERYDAY, OUTPUT_PATH_EVERYDAY, get_month_range, get_data)
+    print()
+
+    valid_print("Savings Account: ")
     manage_files(INPUT_PATH_SAVINGS, OUTPUT_PATH_SAVINGS, get_month_range, get_data)
+    print()
+
+
+if __name__ == "__main__":
+    handle_boq()

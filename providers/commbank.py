@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
-from dates import get_date_between_years, get_month_value, parse_dashed_month_range
-from files import manage_files
-from floats import float_close
-from printing import valid_print
-from search import search
-from transaction import Transaction, TransactionType, parse_money
+from lib.dates import get_date_between_years, get_month_value, parse_dashed_month_range
+from lib.files import manage_files
+from lib.floats import float_close
+from lib.printing import blue_print, valid_print
+from lib.search import search
+from lib.transaction import Transaction, TransactionType, parse_money
 
 
 INPUT_PATH = "data/Commbank/raw"
@@ -247,5 +247,11 @@ def get_data(reader: PdfReader, month_range: List[str]):
     return transactions
 
 
-if __name__ == "__main__":
+def handle_commbank():
+    blue_print("COMMONWEALTH BANK")
     manage_files(INPUT_PATH, OUTPUT_PATH, get_month_range, get_data)
+    print()
+
+
+if __name__ == "__main__":
+    handle_commbank()
