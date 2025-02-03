@@ -50,13 +50,16 @@ def export_to_csv(output_path: str, name: str, transactions: List[Transaction]):
     valid_print(f"{name} written, {len(transactions)} transactions")
 
 
-def get_json_value(filename: str, key: str):
+def get_json(filename: str):
     current_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     with open(os.path.join(current_directory, filename)) as file:
-        data = json.load(file)
-        return data[key]
-    raise Exception(f"Fill {filename}: {key}")
+        return json.load(file)
+
+
+def get_json_value(filename: str, key: str):
+    dict = get_json(filename)
+    return dict[key]
 
 
 def get_password(key: str) -> str:
