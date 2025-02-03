@@ -3,6 +3,8 @@ from typing import List, Tuple
 from pypdf import PdfReader
 from dates import get_date_between_years, get_month_value, parse_dashed_month_range
 from files import manage_files
+from floats import float_close
+from printing import valid_print
 from search import search
 from transaction import Transaction, TransactionType, parse_money
 
@@ -11,16 +13,73 @@ INPUT_PATH = "data/Commbank/raw"
 OUTPUT_PATH = "data/Commbank"
 
 
+class ValidationData:
+    def __init__(self, numbers: List[float]):
+        self.opening = numbers[0]
+        self.debits = numbers[1]
+        self.credits = numbers[2]
+        self.closing = numbers[3]
+
+        final_balance = self.opening + self.credits - self.debits
+        assert float_close(self.closing, final_balance)
+        valid_print(f"Final Balance: {final_balance} / {self.closing}")
+
+    def check(self, transactions: List[Transaction]):
+        total_credit = 0.0
+        total_debit = 0.0
+        for transaction in transactions:
+            if transaction.type in [TransactionType.Credit, TransactionType.TransferIn]:
+                total_credit += transaction.amount
+            else:
+                total_debit += transaction.amount
+
+        assert float_close(self.debits, total_debit)
+        valid_print(f"Total Debits: {total_debit} / {self.debits}")
+
+        assert float_close(self.credits, total_credit)
+        valid_print(f"Total Credits: {total_credit} / {self.credits}")
+
+
+def split_by_bunches(line: str):
+    split = line.split("  ")
+    filtered = list(filter(lambda x: x != "", split))
+    return [s.strip() for s in filtered]
+
+
 def get_page_data(reader: PdfReader):
     return [page.extract_text(extraction_mode="layout") for page in reader.pages]
 
 
+def get_validation_section(page: str):
+    closing_balance_index = page.find("Closing balance")
+
+    start_index = page.find("\n", closing_balance_index)
+    while page[start_index] == "\n":
+        start_index += 1
+
+    next_newline = page.find("\n", start_index)
+
+    if next_newline == -1:
+        return page[start_index:]
+    return page[start_index:next_newline]
+
+
+def get_validation_numbers(sections: List[str]):
+    if sections[-1] != "CR" or sections[0][-2:] != "CR":
+        raise Exception("Expected CR")
+
+    strings = [s[1:] for s in sections[:-1]]
+    strings[0] = strings[0][:-2]
+
+    return [parse_money(s) for s in strings]
+
+
 def get_validation_data(page_data: List[str]):
     page = get_validation_page(page_data)
-    closing_balance_index = page.find("Closing balance")
-    first_newline = page.find("\n", closing_balance_index)
-
-    print(page[index:])
+    validation_section = get_validation_section(page)
+    sections = split_by_bunches(validation_section)
+    numbers = get_validation_numbers(sections)
+    return ValidationData(numbers)
 
 
 def get_validation_page(page_data: List[str]):
@@ -134,6 +193,8 @@ def aggregate_lines(lines: List[str], month_range: List[str]):
         if aggregate is None:
             raise Exception("Expected Aggregate")
         aggregate = (aggregate[0], aggregate[1] + " " + line)
+    if aggregate is not None:
+        aggregated.append(aggregate)
     return aggregated
 
 
@@ -181,7 +242,8 @@ def get_data(reader: PdfReader, month_range: List[str]):
     transaction_pages = get_transaction_pages(page_data)
     lines = get_transaction_lines(transaction_pages)
     aggregated = aggregate_lines(lines, month_range)
-    transactions = get_transactions(aggregated[1:-1])
+    transactions = get_transactions(aggregated[1:])
+    validation_data.check(transactions)
     return transactions
 
 
