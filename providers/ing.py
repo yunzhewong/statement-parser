@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List
 from pypdf import PdfReader
-from lib.dates import get_month_abbreviation
-from lib.files import get_layout_page_data, manage_files
+from lib.MonthRange import MonthRange
+from lib.files import manage_files
 from lib.json_config import get_suffix
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
@@ -77,11 +77,9 @@ def get_month_string(first_page: str):
     return first_page[start_index:end_index].strip()
 
 
-def convert_ddmmyyyy_to_abryy(ddmmyyyy: str):
+def convert_ddmmyyyy(ddmmyyyy: str):
     _day, month_value, year_value = ddmmyyyy.split("/")
-    month_abr = get_month_abbreviation(int(month_value))
-    yy = year_value[2:]
-    return month_abr + yy
+    return datetime(int(year_value), int(month_value), 1)
 
 
 def get_transaction_pages(page_data: List[str]):
@@ -179,10 +177,10 @@ def get_month_range(reader: PdfReader):
     first_page = reader.pages[0].extract_text(extraction_mode="layout")
     month_string = get_month_string(first_page)
     dates = month_string.split(" to ")
-    return [convert_ddmmyyyy_to_abryy(date) for date in dates]
+    return MonthRange(convert_ddmmyyyy(dates[0]), convert_ddmmyyyy(dates[1]))
 
 
-def get_data(reader: PdfReader, month_range: List[str]):
+def get_data(reader: PdfReader, month_range: MonthRange):
     page_data = [page.extract_text(extraction_mode="layout") for page in reader.pages]
     validation_data = get_validation_data(page_data[0])
 

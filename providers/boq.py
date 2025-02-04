@@ -4,10 +4,7 @@ from pypdf import PdfReader
 
 from lib.MonthRange import MonthRange
 from lib.dates import (
-    get_date_between_years,
-    get_date_string_month,
     get_month_value,
-    get_date_string_year,
     parse_dashed_month_range,
 )
 from lib.files import get_layout_page_data, manage_files

@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import Callable, List
 from pypdf import PdfReader
 from lib.MonthRange import MonthRange
-from lib.dates import get_month_value, get_date_string_year
+from lib.dates import format_date, get_month_value
 from lib.files import manage_files
 from lib.json_config import get_suffix, get_password
 
@@ -39,12 +38,10 @@ def extract_date(line: str):
         raise Exception("Expected full statement date")
 
     full_month_string = separated[-2]
-    short_month = full_month_string[0:3]
-    month = get_month_value(short_month)
+    month_string = full_month_string[0:3]
 
-    full_year_string = separated[-1]
-    year = int(full_year_string)
-    return datetime(year, month, 1)
+    year_string = separated[-1]
+    return format_date(month_string, year_string)
 
 
 def extract_month_range(page: str):

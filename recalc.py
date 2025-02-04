@@ -6,8 +6,8 @@ from providers.ing import handle_ing
 
 
 if __name__ == "__main__":
-    # handle_boq()
-    # handle_coles()
-    # handle_commbank()
+    handle_boq()
+    handle_coles()
+    handle_commbank()
     handle_hsbc()
-    # handle_ing()
+    handle_ing()

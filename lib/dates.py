@@ -4,7 +4,6 @@ from typing import List
 from lib.MonthRange import MonthRange
 
 
-# comes in as Mmm YYYY, out as MmmYY (e.g Nov 2024 to Nov24)
 def format_date(month_str: str, year_str: str):
     month = get_month_value(month_str)
     year = int(year_str)
@@ -38,61 +37,13 @@ def get_month_abbreviation(value: int):
     raise Exception("Could not find key")
 
 
-def month_string_to_numbers(month_string: str):
-    month_value = get_month_value(month_string[:3])
-    if month_value is None:
-        raise Exception("Expected month value")
-    month_output = str(month_value).zfill(2)
-    year_value = int(month_string[3:])
-    year_output = str(year_value).zfill(2)
-    return f"20{year_output}-{month_output}"
-
-
-def month_range_to_file_name(month_range: List[str]):
-    numbers = [month_string_to_numbers(month_string) for month_string in month_range]
-    return " to ".join(numbers)
-
-
-def get_date_string_month(month_string: str):
-    value = get_month_value(month_string[:3])
-    if value is None:
-        raise Exception("Value expected")
-    return value
-
-
-def get_date_string_year(month_string: str, month_range: MonthRange):
-    month = get_month_value(month_string)
-    return month_range.get_year_in_range(month)
-
-
-def extract_month_string(month_abbreviation: str, year_string: str):
-    return month_abbreviation + year_string[2:]
-
-
-def get_date_between_years(day: int, month_value: int, month_range: List[str]):
-    low_year = get_date_string_year(month_range[0], month_range)
-    high_year = get_date_string_year(month_range[1], month_range)
-
-    low_month = get_date_string_month(month_range[0])
-    high_month = get_date_string_month(month_range[1])
-    if month_value > low_month:
-        if month_value < high_month:
-            return datetime(low_year, month_value, day)
-    return datetime(high_year, month_value, day)
-
-
 def parse_dashed_month_range(dashed_month_range: str):
     separated = dashed_month_range.split(" ")
 
     if len(separated) != 7:
         raise Exception("Expected 7 Elements")
 
-    start_month = get_month_value(separated[1])
-    start_year = int(separated[2])
-    start = datetime(start_year, start_month, 1)
-
-    end_month = get_month_value(separated[5])
-    end_year = int(separated[6])
-    end = datetime(end_year, end_month, 1)
+    start = format_date(separated[1], separated[2])
+    end = format_date(separated[1], separated[2])
 
     return MonthRange(start, end)

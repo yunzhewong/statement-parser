@@ -3,7 +3,11 @@ from pypdf import PdfReader
 from datetime import datetime
 
 from lib.MonthRange import MonthRange
-from lib.dates import format_date, get_month_value, get_date_string_year
+from lib.dates import (
+    format_date,
+    get_month_abbreviation,
+    get_month_value,
+)
 from lib.files import manage_files
 from lib.json_config import get_suffix, get_password
 
@@ -194,7 +198,7 @@ def line_starts_with_date(line: str, month_range: MonthRange):
     if month_value is None:
         return None
 
-    year_value = get_date_string_year(month_string, month_range)
+    year_value = month_range.get_year_in_range(month_value)
 
     day_value = int(line[start_index : start_index + 2])
     return (
@@ -241,10 +245,17 @@ def format_description(split_desc: List[str]):
     return " ".join(split_desc[start_index:end_index]).strip()
 
 
+def capitalise_date(date: datetime):
+    return f"{get_month_abbreviation(date.month).upper()}{str(date.year)[2:]}"
+
+
 def reformat_transaction(
-    transaction: Tuple[str, int], month_range: List[str]
+    transaction: Tuple[str, int], month_range: MonthRange
 ) -> Tuple[str, int, TransactionType]:
-    capitalised_month_range = [month.upper() for month in month_range]
+    capitalised_dates = [
+        capitalise_date(month_range.start),
+        capitalise_date(month_range.end),
+    ]
 
     desc, val = transaction
     separated_desc = desc.split(" ")
@@ -254,7 +265,7 @@ def reformat_transaction(
 
     if first_string == "EFTPOS":
         return (remaining_desc, -1 * val, TransactionType.CardPayment)
-    if len(first_string) == 7 and first_string[2:] in capitalised_month_range:
+    if len(first_string) == 7 and first_string[2:] in capitalised_dates:
         return (remaining_desc, val, TransactionType.Credit)
     if val < 0:
         return (desc, -1 * val, TransactionType.TransferOut)
