@@ -7,6 +7,7 @@ from typing import Callable, List, Tuple
 
 from pypdf import PdfReader
 
+from lib.MonthRange import MonthRange
 from lib.dates import month_range_to_file_name
 from lib.printing import error_print, valid_print
 from lib.transaction import Transaction
@@ -56,8 +57,8 @@ def get_layout_page_data(reader: PdfReader):
 
 def manage_files(
     suffix: str,
-    get_month_range: Callable[[PdfReader], List[str]],
-    get_data: Callable[[PdfReader, List[str]], List[Transaction]],
+    get_month_range: Callable[[PdfReader], MonthRange],
+    get_data: Callable[[PdfReader, MonthRange], List[Transaction]],
 ):
     force = should_force(sys.argv)
     log = should_log(sys.argv)
@@ -78,7 +79,7 @@ def manage_files(
         month_range = get_month_range(reader)
         reader.close()
 
-        output_name = month_range_to_file_name(month_range)
+        output_name = month_range.get_filename()
         pdf_name = output_name + ".pdf"
 
         if quick and pdf_name == filename:

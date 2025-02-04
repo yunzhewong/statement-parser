@@ -2,6 +2,7 @@ from typing import Dict, List, Tuple
 from pypdf import PdfReader
 from datetime import datetime
 
+from lib.MonthRange import MonthRange
 from lib.dates import format_date, get_month_value, get_date_string_year
 from lib.files import manage_files
 from lib.json_config import get_suffix, get_password
@@ -178,7 +179,7 @@ def get_validation_data(starting_lines: str, ending_lines: str):
 DATE_STRING_LENGTH = 6
 
 
-def line_starts_with_date(line: str, month_range: List[str]):
+def line_starts_with_date(line: str, month_range: MonthRange):
     if len(line) < DATE_STRING_LENGTH:
         return None
 
@@ -202,7 +203,7 @@ def line_starts_with_date(line: str, month_range: List[str]):
     )
 
 
-def group_by_dates(transaction_lines: List[str], month_range: List[str]):
+def group_by_dates(transaction_lines: List[str], month_range: MonthRange):
     groups: Dict[datetime, List[str]] = {}
     current_date = None
 
@@ -337,12 +338,12 @@ def get_month_range(reader: PdfReader):
                 start = format_date(items[4], items[5])
                 end = format_date(items[8], items[9])
 
-                return [start, end]
+                return MonthRange(start, end)
 
     raise Exception("Expected Month Range")
 
 
-def get_pdf_data(reader: PdfReader, month_range: List[str]):
+def get_pdf_data(reader: PdfReader, month_range: MonthRange):
     if not reader.decrypt(PASSWORD):
         raise Exception("PDF Not Decryptable")
 

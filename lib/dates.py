@@ -1,10 +1,14 @@
 from datetime import datetime
 from typing import List
 
+from lib.MonthRange import MonthRange
+
 
 # comes in as Mmm YYYY, out as MmmYY (e.g Nov 2024 to Nov24)
-def format_date(month: str, year: str):
-    return month + year[2:]
+def format_date(month_str: str, year_str: str):
+    month = get_month_value(month_str)
+    year = int(year_str)
+    return datetime(year, month, 1)
 
 
 MONTH_ABBREVIATIONS = {
@@ -56,12 +60,9 @@ def get_date_string_month(month_string: str):
     return value
 
 
-def get_date_string_year(month_string: str, month_range: List[str]):
-    for string in month_range:
-        if string.startswith(month_string):
-            return int("20" + string[3:5])
-
-    raise Exception("Expected to find year")
+def get_date_string_year(month_string: str, month_range: MonthRange):
+    month = get_month_value(month_string)
+    return month_range.get_year_in_range(month)
 
 
 def extract_month_string(month_abbreviation: str, year_string: str):
@@ -86,6 +87,12 @@ def parse_dashed_month_range(dashed_month_range: str):
     if len(separated) != 7:
         raise Exception("Expected 7 Elements")
 
-    start = extract_month_string(separated[1], separated[2])
-    end = extract_month_string(separated[5], separated[6])
-    return [start, end]
+    start_month = get_month_value(separated[1])
+    start_year = int(separated[2])
+    start = datetime(start_year, start_month, 1)
+
+    end_month = get_month_value(separated[5])
+    end_year = int(separated[6])
+    end = datetime(end_year, end_month, 1)
+
+    return MonthRange(start, end)

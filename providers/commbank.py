@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
+from lib.MonthRange import MonthRange
 from lib.dates import get_date_between_years, get_month_value, parse_dashed_month_range
 from lib.files import manage_files
 from lib.json_config import get_suffix, get_password
@@ -175,7 +176,7 @@ def get_transaction_lines(transaction_pages: List[str]):
     return lines
 
 
-def aggregate_lines(lines: List[str], month_range: List[str]):
+def aggregate_lines(lines: List[str], month_range: MonthRange):
     aggregated: List[Tuple[datetime, str]] = []
     aggregate = None
 
@@ -185,7 +186,8 @@ def aggregate_lines(lines: List[str], month_range: List[str]):
             month_value = get_month_value(month_section)
             if month_value is not None:
                 day = int(line[0:2])
-                date = get_date_between_years(day, month_value, month_range)
+                year = month_range.get_year_in_range(month_value)
+                date = datetime(year, month_value, day)
                 if aggregate is not None:
                     aggregated.append(aggregate)
                 aggregate = (date, line[6:].strip())
@@ -235,7 +237,7 @@ def get_transactions(aggregated: List[Tuple[datetime, str]]):
     return transactions
 
 
-def get_data(reader: PdfReader, month_range: List[str]):
+def get_data(reader: PdfReader, month_range: MonthRange):
     page_data = get_page_data(reader)
 
     validation_data = get_validation_data(page_data)

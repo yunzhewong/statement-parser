@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Callable, List
 from pypdf import PdfReader
+from lib.MonthRange import MonthRange
 from lib.dates import get_month_value, get_date_string_year
 from lib.files import manage_files
 from lib.json_config import get_suffix, get_password
@@ -39,14 +40,14 @@ def extract_date(line: str):
 
     full_month_string = separated[-2]
     short_month = full_month_string[0:3]
+    month = get_month_value(short_month)
 
     full_year_string = separated[-1]
-    short_year = full_year_string[-2:]
+    year = int(full_year_string)
+    return datetime(year, month, 1)
 
-    return short_month + short_year
 
-
-def extract_statement_dates(page: str):
+def extract_month_range(page: str):
     begin_start_index = page.find("Statement Begins")
     begin_finish_index = page.find("\n", begin_start_index)
     start_date = extract_date(page[begin_start_index:begin_finish_index])
@@ -55,7 +56,7 @@ def extract_statement_dates(page: str):
     end_finish_index = page.find("\n", end_start_index)
     end_date = extract_date(page[end_start_index:end_finish_index])
 
-    return [start_date, end_date]
+    return MonthRange(start_date, end_date)
 
 
 def get_transaction_details(value: float, desc: str):
@@ -67,7 +68,7 @@ def get_transaction_details(value: float, desc: str):
     return value, TransactionType.CardPayment
 
 
-def parse_transaction(line: str, month_range: List[str]):
+def parse_transaction(line: str, month_range: MonthRange):
     separated = line.strip().split(" ")
 
     month_string = separated[0]
@@ -77,9 +78,9 @@ def parse_transaction(line: str, month_range: List[str]):
         warning_print(f"NO DATE: {line}")
         return None
     day = int(separated[1])
-    year_value = get_date_string_year(month_string, month_range)
+    year = month_range.get_year_in_range(month)
 
-    date = datetime(year_value, month, day)
+    date = datetime(year, month, day)
 
     reverse_index = len(separated) - 1
     value = parse_money(separated[reverse_index])
@@ -104,7 +105,7 @@ def parse_transaction(line: str, month_range: List[str]):
     return Transaction(date, amount, type, description)
 
 
-def extract_transactions(page: str, month_range: List[str]):
+def extract_transactions(page: str, month_range: MonthRange):
     end_index = page.find("Closing Balance")
     if end_index == -1:
         end_index = page.find("(Continued next page)")
@@ -138,11 +139,10 @@ def decrypt_and_get_data(reader: PdfReader):
 
 def get_month_range(reader: PdfReader):
     page_data = decrypt_and_get_data(reader)
-    month_range = extract_statement_dates(page_data[0])
-    return month_range
+    return extract_month_range(page_data[0])
 
 
-def get_pdf_data(reader: PdfReader, month_range: List[str]):
+def get_pdf_data(reader: PdfReader, month_range: MonthRange):
     page_data = decrypt_and_get_data(reader)
 
     transactions = []

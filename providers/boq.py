@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 
+from lib.MonthRange import MonthRange
 from lib.dates import (
     get_date_between_years,
     get_date_string_month,
@@ -147,13 +148,14 @@ def get_items(separated: List[str]):
     return list(filter(lambda x: x != "", separated))
 
 
-def read_date(date_string: str, month_range: List[str]):
+def read_date(date_string: str, month_range: MonthRange):
     separated = date_string.split("-")
     if len(separated) != 2:
         raise Exception("Expected two items")
     day = int(separated[0])
     month = get_month_value(separated[1])
-    return get_date_between_years(day, month, month_range)
+    year = month_range.get_year_in_range(month)
+    return datetime(year, month, day)
 
 
 def get_amount(items: List[str]):
@@ -162,7 +164,7 @@ def get_amount(items: List[str]):
     return parse_money(items[-1].strip())
 
 
-def read_transaction_data(line: str, month_range: List[str]):
+def read_transaction_data(line: str, month_range: MonthRange):
     separated = line.split("  ")
     items = get_items(separated)
 
@@ -194,7 +196,7 @@ def format_transaction(data: Tuple[datetime, str, float]):
     return Transaction(data[0], amount, type, data[1])
 
 
-def extract_transactions(lines: List[str], month_range: List[str]):
+def extract_transactions(lines: List[str], month_range: MonthRange):
     data = None
 
     transactions = []
@@ -225,7 +227,7 @@ def get_month_range(reader: PdfReader):
     return parse_dashed_month_range(dates_string)
 
 
-def get_data(reader: PdfReader, month_range: List[str]):
+def get_data(reader: PdfReader, month_range: MonthRange):
     pages = get_layout_page_data(reader)
 
     validation_data = get_validation_data(pages[0])
