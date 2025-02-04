@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 from lib.dates import get_date_between_years, get_month_value, parse_dashed_month_range
-from lib.files import get_suffix, manage_files
+from lib.files import manage_files
+from lib.json_config import get_suffix, get_password
+
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
 from lib.search import search

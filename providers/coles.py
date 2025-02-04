@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import Callable, List
 from pypdf import PdfReader
 from lib.dates import get_month_value, get_date_string_year
-from lib.files import get_password, get_suffix, manage_files
+from lib.files import manage_files
+from lib.json_config import get_suffix, get_password
+
 from lib.printing import blue_print, warning_print
 from lib.search import find_index_prior_to_newline, search
 from lib.transaction import Transaction, TransactionType, parse_money

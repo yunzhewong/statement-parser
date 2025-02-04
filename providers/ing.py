@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import List
 from pypdf import PdfReader
 from lib.dates import get_month_abbreviation
-from lib.files import get_layout_page_data, get_suffix, manage_files
+from lib.files import get_layout_page_data, manage_files
+from lib.json_config import get_suffix
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
 from lib.search import search

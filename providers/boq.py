@@ -9,7 +9,8 @@ from lib.dates import (
     get_date_string_year,
     parse_dashed_month_range,
 )
-from lib.files import get_layout_page_data, get_suffix, manage_files
+from lib.files import get_layout_page_data, manage_files
+from lib.json_config import get_suffix
 
 from lib.floats import float_close
 from lib.printing import blue_print, valid_print
