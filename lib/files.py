@@ -97,4 +97,4 @@ def manage_files(
 
 
 def filename_is_already_range(filename: str):
-    return get_month_range_from_filename(filename) is None
+    return get_month_range_from_filename(filename) is not None

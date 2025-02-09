@@ -1,7 +1,4 @@
-from datetime import datetime
-from typing import List
-
-from lib.MonthRange import MonthRange
+from datetime import datetime, timedelta
 
 
 def format_date(month_str: str, year_str: str):
@@ -37,17 +34,6 @@ def get_month_abbreviation(value: int):
     raise Exception("Could not find key")
 
 
-def parse_dashed_month_range(dashed_month_range: str):
-    separated = dashed_month_range.split(" ")
-
-    if len(separated) != 7:
-        raise Exception("Expected 7 Elements")
-
-    start = format_date(separated[1], separated[2])
-    end = format_date(separated[1], separated[2])
-
-    return MonthRange(start, end)
-
-
-def dates_overlap(range1: MonthRange, range2: MonthRange):
-    return range1.start <= range2.end and range2.start <= range1.end
+def get_last_date_in_month(month: int, year: int):
+    month_following = datetime(year, month, 28) + timedelta(days=4)
+    return month_following.replace(day=1) - timedelta(days=1)

@@ -2,8 +2,7 @@ from datetime import datetime
 import os
 from typing import List, Tuple
 
-from lib.MonthRange import MonthRange, get_month_range_from_filename
-from lib.dates import dates_overlap
+from lib.MonthRange import MonthRange, dates_overlap, get_month_range_from_filename
 from lib.files import get_filenames
 from lib.transaction import Transaction, get_transactions_in_csv
 

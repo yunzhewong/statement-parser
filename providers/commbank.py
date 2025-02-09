@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
-from lib.MonthRange import MonthRange
-from lib.dates import get_month_value, parse_dashed_month_range
+from lib.MonthRange import MonthRange, parse_dashed_month_range
+from lib.dates import get_month_value
 from lib.files import manage_files
 from lib.json_config import get_suffix
 
@@ -30,7 +30,11 @@ class ValidationData:
         total_credit = 0.0
         total_debit = 0.0
         for transaction in transactions:
-            if transaction.type in [TransactionType.Credit, TransactionType.TransferIn]:
+            if transaction.type in [
+                TransactionType.Credit,
+                TransactionType.TransferIn,
+                TransactionType.Salary,
+            ]:
                 total_credit += transaction.amount
             else:
                 total_debit += transaction.amount
@@ -206,10 +210,13 @@ def parse_possible_dollar_signed_number(s: str):
 
 
 def parse_amount_and_type(value: float, desc: str):
+    if "Salary" in desc:
+        return value, TransactionType.Salary
+
     if "COMMSEC" in desc:
         return -value, TransactionType.Investment
 
-    if "Transfer" in desc:
+    if "Transfer" in desc or "yun zhe wong" in desc.lower():
         if value < 0:
             return -value, TransactionType.TransferOut
         return value, TransactionType.TransferIn

@@ -1,50 +1,23 @@
 from typing import Dict, List
 from lib.Folder import Folder
 from lib.MonthRange import MonthRange
+from lib.dates import get_last_date_in_month
 from lib.files import export_to_csv
 from lib.json_config import get_json
 from datetime import datetime
 
-from lib.printing import blue_print, valid_print, warning_print
-from lib.transaction import Transaction, TransactionType
+from lib.transaction import Transaction
+from summarise import log_info
 
 OUTPUT_PATH = "data"
 
-
-def log_info(transactions: List[Transaction]):
-    d: Dict[TransactionType, float] = {}
-
-    for transaction in transactions:
-        sum = d.get(transaction.type, 0)
-        d[transaction.type] = sum + transaction.amount
-
-    card_payments = d.get(TransactionType.CardPayment, 0)
-    credits = d.get(TransactionType.Credit, 0)
-    transfer_in = d.get(TransactionType.TransferIn, 0)
-    transfer_out = d.get(TransactionType.TransferOut, 0)
-    interest = d.get(TransactionType.Interest, 0)
-    investment = d.get(TransactionType.Investment, 0)
-
-    valid_print(f"Total Card Payments: {card_payments}")
-    valid_print(f"Total Credits: {credits}")
-    valid_print(f"Total Transfer In: {transfer_in}")
-    valid_print(f"Total Transfer Out: {transfer_out}")
-    valid_print(f"Total Interest: {interest}")
-
-    warning_print(f"Total Investments (+): {investment}")
-    warning_print(f"Transfer Difference (+): {transfer_in - transfer_out}")
-
-    plus = credits + transfer_in + interest
-    minus = card_payments + transfer_out + investment
-
-    warning_print(f"Bank Balance Change (+): {plus - minus}")
+start_year = 2023
 
 
-if __name__ == "__main__":
-    suffixes: dict = get_json("suffixes.json")
-
-    folders = [Folder(path) for path in suffixes.values()]
-    query_range = MonthRange(datetime(2024, 12, 1), datetime(2024, 12, 31))
+def collate_transactions(folders: List[Folder], month: int, year: int):
+    start_date = datetime(year, month, 1)
+    end_date = get_last_date_in_month(month, year)
+    query_range = MonthRange(start_date, end_date)
 
     transactions = []
     for folder in folders:
@@ -55,5 +28,21 @@ if __name__ == "__main__":
 
     sorted_transactions = sorted(transactions, key=sort_key)
 
-    export_to_csv(OUTPUT_PATH, query_range.get_filename() + ".csv", transactions)
+    export_to_csv(OUTPUT_PATH, query_range.get_filename() + ".csv", sorted_transactions)
     log_info(sorted_transactions)
+    print()
+
+
+if __name__ == "__main__":
+    suffixes: dict = get_json("suffixes.json")
+
+    folders = [Folder(path) for path in suffixes.values()]
+
+    current_date = datetime.now()
+
+    for year in range(start_year, current_date.year):
+        for month in range(1, 13):
+            collate_transactions(folders, month, year)
+
+    for month in range(1, current_date.month):
+        collate_transactions(folders, month, current_date.year)

@@ -2,11 +2,8 @@ from datetime import datetime
 from typing import List, Tuple
 from pypdf import PdfReader
 
-from lib.MonthRange import MonthRange
-from lib.dates import (
-    get_month_value,
-    parse_dashed_month_range,
-)
+from lib.MonthRange import MonthRange, parse_dashed_month_range
+from lib.dates import get_month_value
 from lib.files import get_layout_page_data, manage_files
 from lib.json_config import get_suffix
 
@@ -178,7 +175,12 @@ def get_transaction_type_and_amount(value: float, desc: str):
         return TransactionType.Interest, value
 
     lowercase_desc = desc.lower()
-    if "future saver" in lowercase_desc or "yun zhe wong" in lowercase_desc:
+    if (
+        "future saver" in lowercase_desc
+        or "yun zhe wong" in lowercase_desc
+        or desc.startswith("From: ")
+        or desc.startswith("To: ")
+    ):
         if value < 0:
             return TransactionType.TransferOut, -value
         return TransactionType.TransferIn, value

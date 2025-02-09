@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
+
+from lib.dates import format_date, get_last_date_in_month
 
 
 @dataclass()
@@ -25,6 +27,18 @@ class MonthRange:
         return date >= self.start and date <= self.end
 
 
+def parse_dashed_month_range(dashed_month_range: str):
+    separated = dashed_month_range.split(" ")
+
+    if len(separated) != 7:
+        raise Exception("Expected 7 Elements")
+
+    start = format_date(separated[1], separated[2])
+    end = format_date(separated[5], separated[6])
+
+    return MonthRange(start, end)
+
+
 def get_month_range_from_filename(filename: str):
     last_dot = len(filename) - 1 - filename[::-1].find(".")
     name = filename[:last_dot]
@@ -43,9 +57,12 @@ def get_month_range_from_filename(filename: str):
         high_year = int(name[11:15])
         high_month = int(name[16:18])
 
-        month_following = datetime(high_year, high_month, 28) + timedelta(days=4)
-        high_date = month_following.replace(day=1) - timedelta(days=1)
+        high_date = get_last_date_in_month(high_month, high_year)
 
         return MonthRange(low_date, high_date)
     except:
         return None
+
+
+def dates_overlap(range1: MonthRange, range2: MonthRange):
+    return range1.start <= range2.end and range2.start <= range1.end

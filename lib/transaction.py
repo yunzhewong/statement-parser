@@ -9,6 +9,7 @@ class TransactionType(Enum):
     TransferOut = "Transfer Out"
     Interest = "Interest"
     Investment = "Investment"
+    Salary = "Salary"
 
 
 class Transaction:
@@ -24,7 +25,12 @@ class Transaction:
         return f"Date: {self.date}, Desc: {self.description}, Amt: {self.amount}, Type: {self.type.value}"
 
     def to_data(self):
-        return [self.date, self.description, self.amount, self.type.value]
+        return [
+            self.date,
+            self.description.replace(",", " "),
+            self.amount,
+            self.type.value,
+        ]
 
 
 def parse_money(money: str):
