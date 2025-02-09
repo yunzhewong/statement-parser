@@ -8,6 +8,7 @@ class TransactionType(Enum):
     TransferIn = "Transfer In"
     TransferOut = "Transfer Out"
     Interest = "Interest"
+    Investment = "Investment"
 
 
 class Transaction:
@@ -31,10 +32,16 @@ def parse_money(money: str):
 
 
 def parse_transaction(line: str):
-    sections = line.split(",")
-
-    date = datetime.strptime(sections[1], "%Y-%m-%d %H:%M:%S")
-    desc = sections[2]
-    amount = float(sections[3])
-    type = TransactionType(sections[4])
+    trimmed = line.replace("\n", "")
+    sections = trimmed.split(",")
+    date = datetime.strptime(sections[0], "%Y-%m-%d %H:%M:%S")
+    desc = sections[1]
+    amount = float(sections[2])
+    type = TransactionType(sections[3])
     return Transaction(date, amount, type, desc)
+
+
+def get_transactions_in_csv(csv_filepath: str):
+    with open(csv_filepath, "r") as f:
+        lines = f.readlines()
+        return [parse_transaction(l) for l in lines[1:]]

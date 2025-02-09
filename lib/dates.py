@@ -47,3 +47,7 @@ def parse_dashed_month_range(dashed_month_range: str):
     end = format_date(separated[1], separated[2])
 
     return MonthRange(start, end)
+
+
+def dates_overlap(range1: MonthRange, range2: MonthRange):
+    return range1.start <= range2.end and range2.start <= range1.end

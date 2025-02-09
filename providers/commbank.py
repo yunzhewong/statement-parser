@@ -206,6 +206,9 @@ def parse_possible_dollar_signed_number(s: str):
 
 
 def parse_amount_and_type(value: float, desc: str):
+    if "COMMSEC" in desc:
+        return -value, TransactionType.Investment
+
     if "Transfer" in desc:
         if value < 0:
             return -value, TransactionType.TransferOut

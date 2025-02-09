@@ -7,7 +7,7 @@ from typing import Callable, List, Tuple
 
 from pypdf import PdfReader
 
-from lib.MonthRange import MonthRange
+from lib.MonthRange import MonthRange, get_month_range_from_filename
 from lib.printing import error_print, valid_print
 from lib.transaction import Transaction
 
@@ -97,20 +97,4 @@ def manage_files(
 
 
 def filename_is_already_range(filename: str):
-    name = filename[: -len(".pdf")]
-    if len(name) != 18:
-        return False
-
-    try:
-        _low_year = int(name[0:4])
-        _low_month = int(name[5:7])
-
-        if name[8:10] != "to":
-            return False
-
-        _high_year = int(name[11:15])
-        _high_month = int(name[17:18])
-    except:
-        return False
-
-    return True
+    return get_month_range_from_filename(filename) is None
