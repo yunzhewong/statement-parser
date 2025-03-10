@@ -36,7 +36,7 @@ def get_filenames(path: str):
     return [f for f in all_items if os.path.isfile(os.path.join(path, f))]
 
 
-def export_to_csv(output_path: str, name: str, transactions: List[Transaction]):
+def transactions_to_csv(output_path: str, name: str, transactions: List[Transaction]):
     csv_path = os.path.join(output_path, name)
 
     if os.path.isfile(csv_path):
@@ -80,7 +80,7 @@ def manage_files(
         month_range = get_month_range(reader)
         reader.close()
 
-        output_name = month_range.get_filename()
+        output_name = month_range.to_filename()
         pdf_name = output_name + ".pdf"
 
         if args.quick and pdf_name == filename:
@@ -94,7 +94,7 @@ def manage_files(
                 print(transaction)
 
         os.rename(file_path, os.path.join(input_path, pdf_name))
-        export_to_csv(output_path, output_name + ".csv", transactions)
+        transactions_to_csv(output_path, output_name + ".csv", transactions)
         print()
 
 

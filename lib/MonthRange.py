@@ -9,7 +9,7 @@ class MonthRange:
     start: datetime
     end: datetime
 
-    def get_filename(self):
+    def to_filename(self):
         low_month_str = str(self.start.month).zfill(2)
         high_month_str = str(self.end.month).zfill(2)
         return f"{self.start.year}-{low_month_str} to {self.end.year}-{high_month_str}"
