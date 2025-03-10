@@ -1,4 +1,5 @@
 import csv
+from dataclasses import dataclass
 import json
 import logging
 import os
@@ -15,16 +16,19 @@ logger = logging.getLogger("pypdf")
 logger.setLevel(logging.ERROR)
 
 
-def should_force(argv: List[str]):
-    return "f" in argv[1:]
+@dataclass
+class FileParsingArgs:
+    force: bool
+    log: bool
+    quick: bool
 
 
-def should_log(argv: List[str]):
-    return "l" in argv[1:]
-
-
-def should_quick(argv: List[str]):
-    return "q" in argv[1:]
+def parse_manage_args(argv: List[str]):
+    all_args = argv[1:]
+    force = "f" in all_args
+    log = "l" in all_args
+    quick = "q" in all_args
+    return FileParsingArgs(force=force, log=log, quick=quick)
 
 
 def get_filenames(path: str):
@@ -59,9 +63,7 @@ def manage_files(
     get_month_range: Callable[[PdfReader], MonthRange],
     get_data: Callable[[PdfReader, MonthRange], List[Transaction]],
 ):
-    force = should_force(sys.argv)
-    log = should_log(sys.argv)
-    quick = should_quick(sys.argv)
+    args = parse_manage_args(sys.argv)
 
     input_path = suffix + "/raw"
     output_path = suffix
@@ -69,7 +71,7 @@ def manage_files(
     filenames = get_filenames(input_path)
 
     for filename in filenames:
-        if not force and not quick and filename_is_already_range(filename):
+        if not args.force and not args.quick and filename_is_already_range(filename):
             print(f"{filename} skipped")
             continue
 
@@ -81,13 +83,13 @@ def manage_files(
         output_name = month_range.get_filename()
         pdf_name = output_name + ".pdf"
 
-        if quick and pdf_name == filename:
+        if args.quick and pdf_name == filename:
             print(f"{output_name} skipped")
             continue
         reader = PdfReader(file_path)
         transactions = get_data(reader, month_range)
 
-        if log:
+        if args.log:
             for transaction in transactions:
                 print(transaction)
 
