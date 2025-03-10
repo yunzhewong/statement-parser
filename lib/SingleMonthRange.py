@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from lib.MonthRange import MonthRange
+from lib.MonthRange import MonthRange, year_month_to_string
 from lib.dates import get_last_date_in_month
 
 
@@ -22,3 +22,6 @@ class SingleMonthRange:
         if new_month == 13:
             return SingleMonthRange(month=new_month - 12, year=self.year + 1)
         return SingleMonthRange(month=new_month, year=self.year)
+
+    def to_string(self):
+        return year_month_to_string(self.year, self.month)

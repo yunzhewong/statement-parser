@@ -4,7 +4,7 @@ import json
 import logging
 import os
 import sys
-from typing import Callable, List, Tuple
+from typing import Any, Callable, List, Tuple
 
 from pypdf import PdfReader
 
@@ -36,20 +36,24 @@ def get_filenames(path: str):
     return [f for f in all_items if os.path.isfile(os.path.join(path, f))]
 
 
-def transactions_to_csv(output_path: str, name: str, transactions: List[Transaction]):
+def export_to_csv(output_path: str, name: str, data: List[List[Any]]):
     csv_path = os.path.join(output_path, name)
 
     if os.path.isfile(csv_path):
         error_print(f"{name} deleted")
         os.remove(csv_path)
 
+    with open(csv_path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
+
+
+def transactions_to_csv(output_path: str, name: str, transactions: List[Transaction]):
     data = [["Date", "Description", "Amount", "Type"]]
     for transaction in transactions:
         data.append(transaction.to_data())
 
-    with open(csv_path, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(data)
+    export_to_csv(output_path, name, data)
 
     valid_print(f"{name} written, {len(transactions)} transactions")
 

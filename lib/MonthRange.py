@@ -4,15 +4,19 @@ from datetime import datetime
 from lib.dates import format_date, get_last_date_in_month
 
 
+def year_month_to_string(year: int, month: int):
+    return f"{year}-{str(month).zfill(2)}"
+
+
 @dataclass()
 class MonthRange:
     start: datetime
     end: datetime
 
     def to_filename(self):
-        low_month_str = str(self.start.month).zfill(2)
-        high_month_str = str(self.end.month).zfill(2)
-        return f"{self.start.year}-{low_month_str} to {self.end.year}-{high_month_str}"
+        low = year_month_to_string(self.start.year, self.start.month)
+        high = year_month_to_string(self.end.year, self.end.month)
+        return f"{low} to {high}"
 
     def get_year_in_range(self, month: int):
         if self.start.year == self.end.year:

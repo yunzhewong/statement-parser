@@ -1,10 +1,9 @@
-from datetime import datetime
 import os
-from typing import List, Tuple
+from typing import List
 
 from lib.MonthRange import MonthRange, dates_overlap, get_month_range_from_filename
 from lib.files import get_filenames
-from lib.transaction import Transaction, get_transactions_in_csv
+from lib.transaction import get_transactions_in_csv
 
 
 def get_filenames_between_dates(query_range: MonthRange, filenames: str):
@@ -40,3 +39,8 @@ class Folder:
                     transactions.append(transaction)
 
         return transactions
+
+    def get_source(self):
+        split = self.path.split("/")
+        without_data_suffix = split[1:]
+        return "-".join(without_data_suffix)
