@@ -16,7 +16,7 @@ DESC_WIDTH = 120
 AMNT_WIDTH = 20
 
 
-def format_string(item_string: str, width: int):
+def pad_string(item_string: str, width: int):
     return " " * (width - len(item_string)) + item_string
 
 
@@ -41,8 +41,8 @@ class Transaction:
         ]
 
     def pretty_string(self):
-        desc_string = format_string(self.description, DESC_WIDTH)
-        amount_string = format_string(str(self.amount), AMNT_WIDTH)
+        desc_string = pad_string(self.description, DESC_WIDTH)
+        amount_string = pad_string(str(self.amount), AMNT_WIDTH)
         return str(self.date) + amount_string + desc_string
 
 
