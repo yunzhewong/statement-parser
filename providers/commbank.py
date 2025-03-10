@@ -213,6 +213,9 @@ def parse_amount_and_type(value: float, desc: str):
     if "Salary" in desc:
         return value, TransactionType.Salary
 
+    if "COLES MASTERCARD" in desc:
+        return -value, TransactionType.TransferOut
+
     if "COMMSEC" in desc:
         return -value, TransactionType.Investment
 

@@ -7,7 +7,7 @@ from lib.json_config import get_json
 from datetime import datetime
 
 from lib.transaction import Transaction
-from summarise import log_info
+from summarise import short_summary
 
 OUTPUT_PATH = "data"
 
@@ -29,7 +29,7 @@ def collate_transactions(folders: List[Folder], month: int, year: int):
     sorted_transactions = sorted(transactions, key=sort_key)
 
     export_to_csv(OUTPUT_PATH, query_range.get_filename() + ".csv", sorted_transactions)
-    log_info(sorted_transactions)
+    short_summary(sorted_transactions)
     print()
 
 

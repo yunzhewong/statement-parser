@@ -1,34 +1,79 @@
+import os
+import sys
 from typing import Dict, List
+
+from lib.categorise import Category, categorise_transaction
 from lib.printing import valid_print, warning_print
-from lib.transaction import Transaction, TransactionType
+from lib.transaction import Transaction, TransactionType, get_transactions_in_csv
 
 
-def log_info(transactions: List[Transaction]):
-    d: Dict[TransactionType, float] = {}
+def short_summary(transactions: List[Transaction]):
+    groups = form_groups(transactions)
+
+    totals: Dict[Category, float] = {}
+    for group_key in groups.keys():
+        total = sum([t.amount for t in groups[group_key]])
+        totals[group_key] = total
+
+    for total_key in totals.keys():
+        valid_print(f"Total {total_key.value}: {totals[total_key]}")
+
+    warning_print(
+        f"Transfer Difference (+): {totals[Category.TransferIn] - totals[Category.TransferOut]}"
+    )
+
+    plus = (
+        totals[Category.Cashback]
+        + totals[Category.TransferIn]
+        + totals[Category.Salary]
+        + totals[Category.Interest]
+    )
+    overall = sum([totals[total_key] for total_key in totals.keys()])
+    minus = overall - plus
+
+    warning_print(f"Balance Change (+): {plus - minus}")
+
+
+def get_transactions():
+    year = int(sys.argv[1])
+    month = int(sys.argv[2])
+
+    filename = f"{year}-{str(month).zfill(2)} to {year}-{str(month).zfill(2)}.csv"
+    full_path = os.path.join("data", filename)
+    return get_transactions_in_csv(full_path)
+
+
+def form_groups(transactions: List[Transaction]):
+    groups: Dict[Category, List[Transaction]] = {}
 
     for transaction in transactions:
-        sum = d.get(transaction.type, 0)
-        d[transaction.type] = sum + transaction.amount
+        category = categorise_transaction(transaction)
 
-    card_payments = d.get(TransactionType.CardPayment, 0)
-    credits = d.get(TransactionType.Credit, 0)
-    transfer_in = d.get(TransactionType.TransferIn, 0)
-    transfer_out = d.get(TransactionType.TransferOut, 0)
-    interest = d.get(TransactionType.Interest, 0)
-    investment = d.get(TransactionType.Investment, 0)
-    salary = d.get(TransactionType.Salary, 0)
+        if category is None:
+            category = Category.Entertainment
 
-    valid_print(f"Total Card Payments: {card_payments}")
-    valid_print(f"Total Credits: {credits}")
-    valid_print(f"Total Transfer In: {transfer_in}")
-    valid_print(f"Total Transfer Out: {transfer_out}")
-    valid_print(f"Total Interest: {interest}")
-    valid_print(f"Total Salary: {salary}")
+        arr = groups.get(category, [])
+        arr.append(transaction)
+        groups[category] = arr
 
-    warning_print(f"Total Investments (+): {investment}")
-    warning_print(f"Transfer Difference (+): {transfer_in - transfer_out}")
+    return groups
 
-    plus = credits + transfer_in + interest
-    minus = card_payments + transfer_out + investment
 
-    warning_print(f"Bank Balance Change (+): {plus - minus}")
+def print_group(category: Category, transactions: List[Transaction]):
+    valid_print(category.value)
+
+    for t in transactions:
+        print(t.pretty_string())
+
+
+def long_summary(transactions: List[Transaction]):
+    groups = form_groups(transactions)
+
+    for category in groups.keys():
+        print_group(category, groups[category])
+        print()
+
+
+if __name__ == "__main__":
+    transactions = get_transactions()
+    long_summary(transactions)

@@ -12,6 +12,14 @@ class TransactionType(Enum):
     Salary = "Salary"
 
 
+DESC_WIDTH = 120
+AMNT_WIDTH = 20
+
+
+def format_string(item_string: str, width: int):
+    return " " * (width - len(item_string)) + item_string
+
+
 class Transaction:
     def __init__(
         self, date: datetime, amount: float, type: TransactionType, description: str
@@ -31,6 +39,11 @@ class Transaction:
             self.amount,
             self.type.value,
         ]
+
+    def pretty_string(self):
+        desc_string = format_string(self.description, DESC_WIDTH)
+        amount_string = format_string(str(self.amount), AMNT_WIDTH)
+        return str(self.date) + amount_string + desc_string
 
 
 def parse_money(money: str):
