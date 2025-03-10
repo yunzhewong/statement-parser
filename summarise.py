@@ -19,14 +19,14 @@ def short_summary(transactions: List[Transaction]):
         valid_print(f"Total {total_key.value}: {totals[total_key]}")
 
     warning_print(
-        f"Transfer Difference (+): {totals[Category.TransferIn] - totals[Category.TransferOut]}"
+        f"Transfer Difference (+): {totals.get(Category.TransferIn, 0) - totals.get(Category.TransferOut, 0)}"
     )
 
     plus = (
-        totals[Category.Cashback]
-        + totals[Category.TransferIn]
-        + totals[Category.Salary]
-        + totals[Category.Interest]
+        totals.get(Category.Cashback, 0)
+        + totals.get(Category.TransferIn, 0)
+        + totals.get(Category.Salary, 0)
+        + totals.get(Category.Interest, 0)
     )
     overall = sum([totals[total_key] for total_key in totals.keys()])
     minus = overall - plus

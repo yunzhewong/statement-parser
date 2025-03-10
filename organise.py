@@ -1,35 +1,13 @@
-from dataclasses import dataclass
-from typing import Dict, List
+from typing import List
+from lib.SingleMonthRange import SingleMonthRange
 from lib.Folder import Folder
-from lib.MonthRange import MonthRange
-from lib.dates import get_last_date_in_month
 from lib.files import transactions_to_csv
 from lib.json_config import get_json
-from datetime import datetime
 
 from lib.transaction import Transaction
 from summarise import short_summary
 
 OUTPUT_PATH = "data"
-
-
-@dataclass
-class SingleMonthRange:
-    month: int
-    year: int
-
-    def to_month_range(self):
-        start_date = datetime(self.year, self.month, 1)
-        end_date = get_last_date_in_month(self.month, self.year)
-        return MonthRange(start_date, end_date)
-
-    def get_incremented_copy(self, increment: int):
-        new_month = self.month + increment
-        if new_month == 0:
-            return SingleMonthRange(month=new_month + 12, year=self.year - 1)
-        if new_month == 13:
-            return SingleMonthRange(month=new_month - 12, year=self.year + 1)
-        return SingleMonthRange(month=new_month, year=year)
 
 
 known_range_with_transactions = SingleMonthRange(month=3, year=2024)
@@ -42,6 +20,9 @@ def collate_transactions(folders: List[Folder], single_month_range: SingleMonthR
     for folder in folders:
         transactions += folder.get_transactions_between_dates(month_range)
 
+    if len(transactions) == 0:
+        return None
+
     sorted_transactions = sorted(transactions, key=lambda x: x.date)
 
     output_csv_name = f"{month_range.to_filename()}.csv"
@@ -50,15 +31,24 @@ def collate_transactions(folders: List[Folder], single_month_range: SingleMonthR
     short_summary(sorted_transactions)
     print()
 
+    return sorted_transactions
+
+
+def search_and_collate(starting_month: SingleMonthRange, direction: int):
+    month = starting_month
+    while True:
+        result = collate_transactions(folders, month)
+
+        if result is None:
+            break
+
+        month = month.get_incremented_copy(direction)
+
 
 if __name__ == "__main__":
     suffixes: dict = get_json("suffixes.json")
 
     folders = [Folder(path) for path in suffixes.values()]
 
-    for year in range(start_year, current_date.year):
-        for month in range(1, 13):
-            collate_transactions(folders, month, year)
-
-    for month in range(1, current_date.month):
-        collate_transactions(folders, month, current_date.year)
+    search_and_collate(known_range_with_transactions, 1)
+    search_and_collate(known_range_with_transactions.get_incremented_copy(-1), 1)
