@@ -3,11 +3,8 @@ import sys
 from typing import List
 
 from lib.SingleMonthRange import SingleMonthRange
-from lib.TransactionHeader import parse_transaction_header
-from lib.categorise import Category
-from lib.printing import valid_print
-from lib.transaction import Transaction, get_transactions_in_csv
-from organise import form_groups
+from lib.TransactionGroups import parse_transaction_groups
+from lib.transaction import get_transactions_in_csv
 
 
 def parse_args(args: List[str]):
@@ -22,24 +19,9 @@ def get_transaction_csv_path(year: int, month: int):
     return os.path.join("data", f"{filename}.csv")
 
 
-def print_group(category: Category, transactions: List[Transaction]):
-    transaction_header = parse_transaction_header(category, transactions)
-    valid_print(transaction_header.pretty_string())
-
-    for t in transactions:
-        print(t.pretty_string())
-
-
-def long_summary(transactions: List[Transaction]):
-    groups = form_groups(transactions)
-
-    for category in groups.keys():
-        print_group(category, groups[category])
-        print()
-
-
 if __name__ == "__main__":
     year, month = parse_args(sys.argv[1:])
     path = get_transaction_csv_path(year, month)
     transactions = get_transactions_in_csv(path)
-    long_summary(transactions)
+    transaction_groups = parse_transaction_groups(transactions)
+    transaction_groups.print_comprehensive_summary()

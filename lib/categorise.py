@@ -1,33 +1,59 @@
 from enum import Enum
 
+from lib.printing import blue_print, error_print, valid_print
 from lib.transaction import Transaction, TransactionType
 
 
 class Category(Enum):
-    TransferIn = "Transfers In"
-    TransferOut = "Transfers Out"
     Interest = "Interest"
     Cashback = "Cashback"
     Salary = "Salary"
-    Investments = "Investments"
 
     Transport = "Transport"
     Utilities = "Utilities"
     Groceries = "Groceries"
     Entertainment = "Entertainment"
 
-
-def category_is_positive(category: Category):
-    return category in [
-        Category.TransferIn,
-        Category.Interest,
-        Category.Cashback,
-        Category.Salary,
-    ]
+    TransferIn = "Transfers In"
+    TransferOut = "Transfers Out"
+    Investments = "Investments"
 
 
-def print_based_on_category():
-    pass
+INCOME_CATEGORIES = [
+    Category.Interest,
+    Category.Cashback,
+    Category.Salary,
+]
+
+EXPENSE_CATEGORIES = [
+    Category.Transport,
+    Category.Utilities,
+    Category.Groceries,
+    Category.Entertainment,
+]
+
+TRANSFER_CATEGORIES = [Category.TransferIn, Category.TransferOut, Category.Investments]
+
+
+def category_is_earning(category: Category):
+    return category in INCOME_CATEGORIES
+
+
+def category_is_expense(category: Category):
+    return category in EXPENSE_CATEGORIES
+
+
+def category_is_transfer(category: Category):
+    return category in TRANSFER_CATEGORIES
+
+
+def print_based_on_category(category: Category, text: str):
+    if category_is_transfer(category):
+        blue_print(text)
+    if category_is_earning(category):
+        valid_print(text)
+    if category_is_expense(category):
+        error_print(text)
 
 
 def get_category_from_type(type: TransactionType):

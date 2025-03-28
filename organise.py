@@ -2,6 +2,7 @@ from typing import Dict, List
 from lib.Metadata import Metadata, metadata_to_csv
 from lib.SingleMonthRange import SingleMonthRange
 from lib.Folder import Folder
+from lib.TransactionGroups import parse_transaction_groups
 from lib.categorise import Category, categorise_transaction
 from lib.files import transactions_to_csv
 from lib.json_config import get_json
@@ -13,29 +14,9 @@ OUTPUT_PATH = "data"
 known_range_with_transactions = SingleMonthRange(month=3, year=2024)
 
 
-def form_groups(transactions: List[Transaction]):
-    groups: Dict[Category, List[Transaction]] = {}
-
-    for transaction in transactions:
-        category = categorise_transaction(transaction)
-
-        if category is None:
-            category = Category.Entertainment
-
-        arr = groups.get(category, [])
-        arr.append(transaction)
-        groups[category] = arr
-
-    return groups
-
-
 def short_summary(transactions: List[Transaction]):
-    groups = form_groups(transactions)
-
-    totals: Dict[Category, float] = {}
-    for group_key in groups.keys():
-        total = sum([t.amount for t in groups[group_key]])
-        totals[group_key] = total
+    transaction_groups = parse_transaction_groups(transactions)
+    totals = transaction_groups.compute_totals()
 
     for total_key in totals.keys():
         valid_print(f"Total {total_key.value}: {totals[total_key]}")
