@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from lib.printing import blue_print, error_print, valid_print
 from lib.transaction import Transaction, TransactionType
@@ -45,6 +46,24 @@ def category_is_expense(category: Category):
 
 def category_is_transfer(category: Category):
     return category in TRANSFER_CATEGORIES
+
+
+def category_signed_transaction_sum(transactions: List[Transaction]):
+    total = 0
+    for t in transactions:
+        category = categorise_transaction(t)
+
+        if category_is_earning(category):
+            total += t.amount
+        if category_is_expense(category):
+            total -= t.amount
+        if category == Category.TransferIn:
+            total += t.amount
+        if category == Category.TransferOut:
+            total -= t.amount
+        if category == Category.Investments:
+            total += 0  # ignore
+    return total
 
 
 def print_based_on_category(category: Category, text: str):
@@ -102,4 +121,4 @@ def categorise_transaction(transaction: Transaction):
     if desc_category is not None:
         return desc_category
 
-    return None
+    return Category.Entertainment

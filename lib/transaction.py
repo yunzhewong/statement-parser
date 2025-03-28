@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 from lib.strings import float_to_money_str, pad_string
 
@@ -63,3 +64,7 @@ def get_transactions_in_csv(csv_filepath: str):
     with open(csv_filepath, "r") as f:
         lines = f.readlines()
         return [parse_transaction(l) for l in lines[1:]]
+
+
+def sum_transactions(transactions: List[Transaction]):
+    return sum([t.amount for t in transactions])

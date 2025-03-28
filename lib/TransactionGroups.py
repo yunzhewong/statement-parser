@@ -7,17 +7,16 @@ from lib.categorise import (
     TRANSFER_CATEGORIES,
     Category,
     categorise_transaction,
+    category_signed_transaction_sum,
     print_based_on_category,
 )
-from lib.printing import valid_print
 from lib.strings import float_to_money_str, pad_string
-from lib.transaction import AMNT_WIDTH, DATE_WIDTH, Transaction
+from lib.transaction import AMNT_WIDTH, DATE_WIDTH, Transaction, sum_transactions
 
 
-def format_combined_transaction_title(text: str, transactions: List[Transaction]):
-    total_value = sum([t.amount for t in transactions])
+def format_text_value_header(text: str, value: float):
     remaining_width = DATE_WIDTH + AMNT_WIDTH - len(text)
-    value_string = pad_string(float_to_money_str(total_value), remaining_width)
+    value_string = pad_string(float_to_money_str(value), remaining_width)
     return text + value_string
 
 
@@ -27,9 +26,9 @@ class TransactionGroups:
 
     def compute_totals(self):
         totals: Dict[Category, float] = {}
-        for group_key in self.dict.keys():
-            total = sum([t.amount for t in self.dict[group_key]])
-            totals[group_key] = total
+        for category in self.dict.keys():
+            total = sum_transactions(self.dict[category])
+            totals[category] = total
         return totals
 
     def print_category_type(self, name: str, categories: List[Category]):
@@ -37,7 +36,8 @@ class TransactionGroups:
         for category in categories:
             all_transactions += self.dict.get(category, [])
 
-        title = format_combined_transaction_title(name, all_transactions)
+        value = category_signed_transaction_sum(all_transactions)
+        title = format_text_value_header(name, value)
         print_based_on_category(categories[0], title)
         for category in categories:
             self.print_group(category)
@@ -47,9 +47,8 @@ class TransactionGroups:
         if transactions is None:
             return
 
-        transaction_header = format_combined_transaction_title(
-            category.value, transactions
-        )
+        value = sum_transactions(transactions)
+        transaction_header = format_text_value_header(f"{category.value}", value)
         print_based_on_category(category, transaction_header)
 
         for t in transactions:
@@ -67,10 +66,6 @@ def parse_transaction_groups(transactions: List[Transaction]):
 
     for transaction in transactions:
         category = categorise_transaction(transaction)
-
-        if category is None:
-            category = Category.Entertainment
-
         arr = dict.get(category, [])
         arr.append(transaction)
         dict[category] = arr
