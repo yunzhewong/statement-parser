@@ -61,3 +61,15 @@ def test_transaction_descs():
         categorise_transaction(dummy_desc("WOOLWORTHS/313 VICTORIA 442720SABBOTSFORD"))
         == Category.Groceries
     )
+    assert (
+        categorise_transaction(dummy_desc("ALDI STORES - MOONEE P MOONEE PONDS"))
+        == Category.Groceries
+    )
+    assert (
+        categorise_transaction(dummy_desc("METRO PETROLEUM CARLTO CARLTON"))
+        == Category.Transport
+    )
+    assert (
+        categorise_transaction(dummy_desc("Paypal *Amaysimmobi 4029357733 Au"))
+        == Category.Utilities
+    )

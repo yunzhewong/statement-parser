@@ -1,66 +1,30 @@
 import os
 import sys
-from typing import Dict, List
+from typing import List
 
-from lib.categorise import Category, categorise_transaction
-from lib.printing import valid_print, warning_print
-from lib.transaction import Transaction, TransactionType, get_transactions_in_csv
-
-
-def short_summary(transactions: List[Transaction]):
-    groups = form_groups(transactions)
-
-    totals: Dict[Category, float] = {}
-    for group_key in groups.keys():
-        total = sum([t.amount for t in groups[group_key]])
-        totals[group_key] = total
-
-    for total_key in totals.keys():
-        valid_print(f"Total {total_key.value}: {totals[total_key]}")
-
-    warning_print(
-        f"Transfer Difference (+): {totals.get(Category.TransferIn, 0) - totals.get(Category.TransferOut, 0)}"
-    )
-
-    plus = (
-        totals.get(Category.Cashback, 0)
-        + totals.get(Category.TransferIn, 0)
-        + totals.get(Category.Salary, 0)
-        + totals.get(Category.Interest, 0)
-    )
-    overall = sum([totals[total_key] for total_key in totals.keys()])
-    minus = overall - plus
-
-    warning_print(f"Balance Change (+): {plus - minus}")
+from lib.SingleMonthRange import SingleMonthRange
+from lib.TransactionHeader import parse_transaction_header
+from lib.categorise import Category
+from lib.printing import valid_print
+from lib.transaction import Transaction, get_transactions_in_csv
+from organise import form_groups
 
 
-def get_transactions():
-    year = int(sys.argv[1])
-    month = int(sys.argv[2])
-
-    filename = f"{year}-{str(month).zfill(2)} to {year}-{str(month).zfill(2)}.csv"
-    full_path = os.path.join("data", filename)
-    return get_transactions_in_csv(full_path)
+def parse_args(args: List[str]):
+    year = int(args[0])
+    month = int(args[1])
+    return year, month
 
 
-def form_groups(transactions: List[Transaction]):
-    groups: Dict[Category, List[Transaction]] = {}
-
-    for transaction in transactions:
-        category = categorise_transaction(transaction)
-
-        if category is None:
-            category = Category.Entertainment
-
-        arr = groups.get(category, [])
-        arr.append(transaction)
-        groups[category] = arr
-
-    return groups
+def get_transaction_csv_path(year: int, month: int):
+    month_range = SingleMonthRange(month=month, year=year).to_month_range()
+    filename = month_range.to_filename()
+    return os.path.join("data", f"{filename}.csv")
 
 
 def print_group(category: Category, transactions: List[Transaction]):
-    valid_print(category.value)
+    transaction_header = parse_transaction_header(category, transactions)
+    valid_print(transaction_header.pretty_string())
 
     for t in transactions:
         print(t.pretty_string())
@@ -75,5 +39,7 @@ def long_summary(transactions: List[Transaction]):
 
 
 if __name__ == "__main__":
-    transactions = get_transactions()
+    year, month = parse_args(sys.argv[1:])
+    path = get_transaction_csv_path(year, month)
+    transactions = get_transactions_in_csv(path)
     long_summary(transactions)

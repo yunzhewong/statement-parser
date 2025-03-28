@@ -1,16 +1,59 @@
-from typing import List
+from typing import Dict, List
 from lib.Metadata import Metadata, metadata_to_csv
 from lib.SingleMonthRange import SingleMonthRange
 from lib.Folder import Folder
+from lib.categorise import Category, categorise_transaction
 from lib.files import transactions_to_csv
 from lib.json_config import get_json
-
+from lib.printing import valid_print, warning_print
 from lib.transaction import Transaction
-from summarise import short_summary
 
 OUTPUT_PATH = "data"
 
 known_range_with_transactions = SingleMonthRange(month=3, year=2024)
+
+
+def form_groups(transactions: List[Transaction]):
+    groups: Dict[Category, List[Transaction]] = {}
+
+    for transaction in transactions:
+        category = categorise_transaction(transaction)
+
+        if category is None:
+            category = Category.Entertainment
+
+        arr = groups.get(category, [])
+        arr.append(transaction)
+        groups[category] = arr
+
+    return groups
+
+
+def short_summary(transactions: List[Transaction]):
+    groups = form_groups(transactions)
+
+    totals: Dict[Category, float] = {}
+    for group_key in groups.keys():
+        total = sum([t.amount for t in groups[group_key]])
+        totals[group_key] = total
+
+    for total_key in totals.keys():
+        valid_print(f"Total {total_key.value}: {totals[total_key]}")
+
+    warning_print(
+        f"Transfer Difference (+): {totals.get(Category.TransferIn, 0) - totals.get(Category.TransferOut, 0)}"
+    )
+
+    plus = (
+        totals.get(Category.Cashback, 0)
+        + totals.get(Category.TransferIn, 0)
+        + totals.get(Category.Salary, 0)
+        + totals.get(Category.Interest, 0)
+    )
+    overall = sum([totals[total_key] for total_key in totals.keys()])
+    minus = overall - plus
+
+    warning_print(f"Balance Change (+): {plus - minus}")
 
 
 def collate_transactions(folders: List[Folder], single_month_range: SingleMonthRange):

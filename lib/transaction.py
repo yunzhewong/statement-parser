@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import Enum
 
+from lib.strings import float_to_money_str, pad_string
+
 
 class TransactionType(Enum):
     CardPayment = "Card Payment"
@@ -12,12 +14,9 @@ class TransactionType(Enum):
     Salary = "Salary"
 
 
-DESC_WIDTH = 120
+DATE_WIDTH = 19
 AMNT_WIDTH = 20
-
-
-def pad_string(item_string: str, width: int):
-    return " " * (width - len(item_string)) + item_string
+DESC_WIDTH = 120
 
 
 class Transaction:
@@ -42,7 +41,7 @@ class Transaction:
 
     def pretty_string(self):
         desc_string = pad_string(self.description, DESC_WIDTH)
-        amount_string = pad_string(str(self.amount), AMNT_WIDTH)
+        amount_string = pad_string(float_to_money_str(self.amount), AMNT_WIDTH)
         return str(self.date) + amount_string + desc_string
 
 

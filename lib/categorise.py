@@ -55,11 +55,14 @@ def get_category_from_description(desc: str):
     if "art mem vol" in lowered:
         return Category.Investments
 
-    if "agl" in lowered:
+    if "agl" in lowered or "*amaysimmobi" in lowered:
         return Category.Utilities
 
-    if "coles" in lowered or "woolworths" in lowered:
+    if "coles" in lowered or "woolworths" in lowered or "aldi" in lowered:
         return Category.Groceries
+
+    if "metro petroleum" in lowered:
+        return Category.Transport
 
     return None
 
